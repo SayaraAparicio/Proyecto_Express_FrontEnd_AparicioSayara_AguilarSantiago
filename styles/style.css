@@ -18,14 +18,14 @@
     align-items: center;
     align-items: center;
     margin-left: 20%; 
-    margin-top: -50px;
+    margin-top: -40px;
 }
 
 
 .nav-link {
     color: white;
     text-decoration: none;
-    font-size: 150%;
+    font-size: 100%;
     font-weight: 700;
     transition: color 0.3s ease;
 }
