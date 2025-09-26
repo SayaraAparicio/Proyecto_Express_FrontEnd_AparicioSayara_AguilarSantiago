@@ -19,7 +19,6 @@
         let currentFeaturedIndex = 0;
         let featuredSeries = [];
 
-        // Fetch content from TMDB API
         async function fetchContent(endpoint) {
             try {
                 const response = await fetch(`${endpoint}?api_key=${API_KEY}&language=es-ES&page=1`);
@@ -32,7 +31,6 @@
             }
         }
 
-        // Fetch movies by genre
         async function fetchMoviesByGenre(genreId) {
             try {
                 const response = await fetch(`${ENDPOINTS.byGenre}?api_key=${API_KEY}&language=es-ES&with_genres=${genreId}&page=1&sort_by=popularity.desc`);
@@ -45,7 +43,7 @@
             }
         }
 
-        // Get genre names from IDs
+
         function getGenreNames(genreIds) {
             const GENRES = {
                 28: 'Acción', 12: 'Aventura', 16: 'Animación', 35: 'Comedia',
@@ -80,7 +78,6 @@
             `;
         }
 
-        // Create featured card for top series section
         function createFeaturedCard(series, index) {
             const title = series.name || series.title;
             const releaseYear = series.first_air_date ? new Date(series.first_air_date).getFullYear() : 'N/A';
@@ -98,7 +95,6 @@
             `;
         }
 
-        // Render content to track (for carousels)
         function renderTrack(content, trackId, isMovie = true) {
             const track = document.getElementById(trackId);
             if (!track) return;
@@ -112,7 +108,7 @@
             track.innerHTML = html;
         }
 
-        // Render movies grid (for grid sections)
+
         function renderMoviesGrid(movies, containerId) {
             const container = document.getElementById(containerId);
             if (!container) return;
@@ -126,7 +122,6 @@
             container.innerHTML = moviesHtml;
         }
 
-        // Render featured track
         function renderFeaturedTrack(series) {
             const track = document.getElementById('featured-track');
             if (!track || series.length === 0) return;
@@ -135,7 +130,6 @@
             track.innerHTML = html;
         }
 
-        // Update hero section
         function updateHeroSection(item) {
             if (!item) return;
 
@@ -153,14 +147,14 @@
                 document.getElementById('hero-bg').style.backgroundImage = `url('${backdropUrl}')`;
             }
 
-            // Update star rating
+            
             const stars = document.querySelectorAll('#hero-rating .star');
             stars.forEach((star, index) => {
                 star.style.color = index < rating ? '#ffd700' : '#555';
             });
         }
 
-        // Update featured section
+       
         function updateFeaturedSection(series, index) {
             if (!series || series.length === 0) return;
             
@@ -174,7 +168,7 @@
             document.getElementById('f-meta').textContent = getGenreNames(item.genre_ids);
             document.getElementById('f-desc').textContent = item.overview || 'Descripción no disponible.';
 
-            // Update background
+           
             const bgImg = index % 2 === 0 ? 'featured-bg-a' : 'featured-bg-b';
             const otherBg = index % 2 === 0 ? 'featured-bg-b' : 'featured-bg-a';
             
@@ -185,7 +179,7 @@
             }
         }
 
-        // Scroll row horizontally
+        
         function scrollRow(trackId, direction) {
             const track = document.getElementById(`${trackId}-track`);
             if (!track) return;
@@ -197,19 +191,19 @@
             });
         }
 
-        // Select content (movies/series)
+       
         function selectContent(id, isMovie) {
             console.log(`Selected ${isMovie ? 'movie' : 'series'} ID:`, id);
             alert(`${isMovie ? 'Película' : 'Serie'} seleccionada (ID: ${id}). Funcionalidad pendiente de implementar.`);
         }
 
-        // Select featured series
+        
         function selectFeatured(index) {
             currentFeaturedIndex = index;
             updateFeaturedSection(featuredSeries, index);
         }
 
-        // Handle genre selection
+       
         async function selectGenre(genreId, genreName) {
             // Hide all other sections
             document.querySelectorAll('.row-section').forEach(section => {
@@ -299,14 +293,14 @@
             }
         }
 
-        // Auto-rotate featured series
+        // cambiar pelis
         function startFeaturedRotation() {
             setInterval(() => {
                 if (featuredSeries.length > 0) {
                     currentFeaturedIndex = (currentFeaturedIndex + 1) % featuredSeries.length;
                     updateFeaturedSection(featuredSeries, currentFeaturedIndex);
                 }
-            }, 8000); // Change every 8 seconds
+            }, 8000); // cambia cada 8 segundos
         }
 
         // Event listeners
