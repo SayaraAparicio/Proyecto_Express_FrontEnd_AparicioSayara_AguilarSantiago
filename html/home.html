@@ -1,109 +1,198 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Karenflix</title>
+    <title>KarenFlix</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-    <link rel="icon" type="image/x-icon" href="../storage/icon.png">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="icon" type="image/x-icon" href="../storage/icon.png">
     <link href="../styles/home.css" rel="stylesheet">
+
 </head>
-
 <body>
+    <!-- Imagen de fondo -->
     <img class="fondo" src="../storage/fondoft.png" alt="">
-    <img class="logo" src="../storage/logo.png" alt="">
-
-    </head>
-
-    <body>
-        <header class="header">
-            <img class="logo" src="../storage/logo.png" alt="">
-            <nav class="nav">
-                <a href="#inicio">Inicio</a>
-                <a href="#series">Series</a>
-                <a href="#peliculas">Películas</a>
-                <a href="#mi-lista">Mi Lista</a>
-                <a href="#tendencias">Tendencias</a>
-            </nav>
-            <div class="header-icons">
-                <div class="search-icon">🔍</div>
-                <div class="profile-icon"></div>
+    
+    <!-- Header -->
+    <header class="header">
+        <img class="logo" src="../storage/logo.png" alt="KarenFlix">
+        <nav class="nav">
+            <a href="#inicio">Inicio</a>
+            <a href="#series">Series</a>
+            <a href="#peliculas">Películas</a>
+            <div class="dropdown">
+                <a href="#generos" class="dropdown-toggle">Géneros ▼</a>
+                <div class="dropdown-menu">
+                    <a href="#" data-genre="28">Acción</a>
+                    <a href="#" data-genre="12">Aventura</a>
+                    <a href="#" data-genre="16">Animación</a>
+                    <a href="#" data-genre="35">Comedia</a>
+                    <a href="#" data-genre="80">Crimen</a>
+                    <a href="#" data-genre="99">Documental</a>
+                    <a href="#" data-genre="18">Drama</a>
+                    <a href="#" data-genre="10751">Familia</a>
+                    <a href="#" data-genre="14">Fantasía</a>
+                    <a href="#" data-genre="36">Historia</a>
+                    <a href="#" data-genre="27">Terror</a>
+                    <a href="#" data-genre="10402">Música</a>
+                    <a href="#" data-genre="9648">Misterio</a>
+                    <a href="#" data-genre="10749">Romance</a>
+                    <a href="#" data-genre="878">Ciencia Ficción</a>
+                    <a href="#" data-genre="53">Suspenso</a>
+                </div>
             </div>
-        </header>
+            <a href="#tendencias">Tendencias</a>
+        </nav>
+        <div class="header-icons">
+             <div class="search-icon">🔍</div>
+            <div class="profile-icon">😊</div>
+        </div>
+    </header>
 
-        <!-- Main Content -->
-        <main class="main-content">
-            <!-- Hero Section -->
-            <section class="hero" id="hero-section">
-                <div class="hero-background" id="hero-bg"></div>
-                <div class="hero-content">
-                    <div class="hero-category" id="hero-category">Cargando...</div>
-                    <h1 class="hero-title" id="hero-title">Cargando películas...</h1>
-                    <div class="hero-meta" id="hero-meta">
-                        <span id="hero-year">2024</span>
-                        <span>|</span>
-                        <span id="hero-director">Director</span>
-                        <span>|</span>
-                        <span id="hero-seasons">Película</span>
-                    </div>
-                    <p class="hero-description" id="hero-description">
-                        Conectando con TMDB para obtener las mejores películas...
-                    </p>
-                    <div class="hero-rating" id="hero-rating">
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                    </div>
-                    <div class="hero-buttons">
-                        <button class="btn-primary">▶ VER AHORA</button>
-                        <button class="btn-secondary">📋 TODOS LOS EPISODIOS</button>
-                    </div>
+    <!-- Main Content -->
+    <main class="main-content">
+        <section class="hero" id="hero-section">
+            <div class="hero-background" id="hero-bg"></div>
+            <div class="hero-content">
+                <div class="hero-category" id="hero-category">Película Destacada</div>
+                <h1 class="hero-title" id="hero-title">Cargando películas...</h1>
+                <div class="hero-meta" id="hero-meta">
+                    <span id="hero-year">2024</span>
+                    <span>|</span>
+                    <span id="hero-director">Director</span>
+                    <span>|</span>
+                    <span id="hero-seasons">Película</span>
                 </div>
-                <div class="age-rating">16+</div>
-            </section>
+                <p class="hero-description" id="hero-description">
+                    Conectando con TMDB para obtener las mejores películas...
+                </p>
+                <div class="hero-rating" id="hero-rating">
+                    <span class="star">★</span>
+                    <span class="star">★</span>
+                    <span class="star">★</span>
+                    <span class="star">★</span>
+                    <span class="star">★</span>
+                </div>
+                <div class="hero-buttons">
+                    <button class="btn-primary">▶ VER AHORA</button>
+                    <button class="btn-secondary">TODOS LOS EPISODIOS</button>
+                </div>
+            </div>
+            <div class="age-rating">16+</div>
+        </section>
 
-            <!-- Popular Movies -->
-            <section class="section">
-                <h2 class="section-title">POPULARES EN ESTA CATEGORÍA</h2>
-                <div class="movies-grid" id="popular-movies">
+        <!-- Latest Releases -->
+        <section class="row-section">
+            <h2 class="row-title">Últimos Lanzamientos</h2>
+            <div class="row-inner">
+                <button class="row-nav prev" onclick="scrollRow('latest', -1)">❮</button>
+                <div class="row-track" id="latest-track">
                     <div class="loading">
                         <div class="spinner"></div>
-                        Cargando películas populares...
+                        Cargando últimos lanzamientos...
                     </div>
                 </div>
-            </section>
+                <button class="row-nav next" onclick="scrollRow('latest', 1)">❯</button>
+            </div>
+        </section>
 
-            <!-- Top Rated Movies -->
-            <section class="section">
-                <h2 class="section-title">MEJOR CALIFICADAS</h2>
-                <div class="movies-grid" id="top-rated-movies">
+        <!-- Popular Movies & Series -->
+        <section class="row-section">
+            <h2 class="row-title">Películas y Series Populares</h2>
+            <div class="row-inner">
+                <button class="row-nav prev" onclick="scrollRow('popular-content', -1)">❮</button>
+                <div class="row-track" id="popular-content-track">
                     <div class="loading">
                         <div class="spinner"></div>
-                        Cargando películas mejor calificadas...
+                        Cargando contenido popular...
                     </div>
                 </div>
-            </section>
+                <button class="row-nav next" onclick="scrollRow('popular-content', 1)">❯</button>
+            </div>
+        </section>
 
-            <!-- Upcoming Movies -->
-            <section class="section">
-                <h2 class="section-title">PRÓXIMAMENTE</h2>
-                <div class="movies-grid" id="upcoming-movies">
-                    <div class="loading">
-                        <div class="spinner"></div>
-                        Cargando próximos estrenos...
+        <!-- Top Series Section -->
+        <section class="featured-carousel" id="featured-section">
+            <div class="featured-bg">
+                <div class="featured-bg__img is-a" id="featured-bg-a"></div>
+                <div class="featured-bg__img is-b" id="featured-bg-b"></div>
+                <div class="featured-bg__veil"></div>
+            </div>
+
+            <div class="featured-grid">
+                <div class="featured-info">
+                    <p class="f-suptitle">Las 10 Series Más Populares en Colombia</p>
+                    <p class="f-sub">Mira las series más vistas de este mes.</p>
+                    <p class="f-year" id="f-year">2024</p>
+                    <h2 class="f-title" id="f-title">Cargando...</h2>
+                    <p class="f-meta" id="f-meta">Drama • Suspenso</p>
+                    <p class="f-desc" id="f-desc">Descripción de la serie destacada...</p>
+                    <div class="f-actions">
+                        <a class="btn btn-primary" href="#" id="f-play">▶ Ver Trailer</a>
+                        <a class="btn btn-ghost" href="#" id="f-review">★ Reseñar</a>
                     </div>
                 </div>
-            </section>
-        </main>
-    </body>
 
-</html>
+                <div class="featured-strip row-inner">
+                    <button class="row-nav prev" onclick="scrollRow('featured', -1)">❮</button>
+                    <div class="row-track" id="featured-track">
+                        <div class="loading">
+                            <div class="spinner"></div>
+                            Cargando top series...
+                        </div>
+                    </div>
+                    <button class="row-nav next" onclick="scrollRow('featured', 1)">❯</button>
+                </div>
+            </div>
+        </section>
 
+        <!-- Popular Movies (Grid) -->
+        <section class="section">
+            <h2 class="section-title">POPULARES EN ESTA CATEGORÍA</h2>
+            <div class="movies-grid" id="popular-movies">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    Cargando películas populares...
+                </div>
+            </div>
+        </section>
+
+        <!-- Top Rated Movies (Grid) -->
+        <section class="section">
+            <h2 class="section-title">MEJOR CALIFICADAS</h2>
+            <div class="movies-grid" id="top-rated-movies">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    Cargando películas mejor calificadas...
+                </div>
+            </div>
+        </section>
+
+        <!-- Upcoming Movies (Grid) -->
+        <section class="section">
+            <h2 class="section-title">PRÓXIMAMENTE</h2>
+            <div class="movies-grid" id="upcoming-movies">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    Cargando próximos estrenos...
+                </div>
+            </div>
+        </section>
+
+        <!-- Genre Section (Hidden by default) -->
+        <section class="section" id="genre-section" style="display: none;">
+            <h2 class="section-title" id="genre-title">PELÍCULAS DE GÉNERO</h2>
+            <div class="movies-grid" id="genre-movies">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    Cargando películas del género...
+                </div>
+            </div>
+        </section>
+    </main>
 </body>
 <script src="../scripts/home.js"></script>
 </html>
