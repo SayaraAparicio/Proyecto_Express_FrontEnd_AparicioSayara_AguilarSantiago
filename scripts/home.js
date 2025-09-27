@@ -1,17 +1,17 @@
-// API
-const API_KEY = '8265bd1679663a7ea12ac168da84d2e8';
-const BASE_URL = 'https://api.themoviedb.org/3';
-const IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w500';
-const IMAGE_BASE_URL_ORIGINAL = 'https://image.tmdb.org/t/p/original';
+// API Configuration - Configura tu API aquí
+const API_KEY = ''; // Coloca tu API key aquí
+const BASE_URL = ''; // URL base de tu API
+const IMAGE_BASE_URL = ''; // URL base para imágenes pequeñas
+const IMAGE_BASE_URL_ORIGINAL = ''; // URL base para imágenes originales
 
-// API Endpoints
+// API Endpoints - Configura los endpoints de tu API
 const ENDPOINTS = {
-    popular: `${BASE_URL}/movie/popular`,
-    topRated: `${BASE_URL}/movie/top_rated`,
-    popularTv: `${BASE_URL}/tv/popular`,
-    upcoming: `${BASE_URL}/movie/upcoming`,
-    topRatedTv: `${BASE_URL}/tv/top_rated`,
-    search: `${BASE_URL}/search/movie`
+    popular: ``, // Endpoint para películas populares
+    topRated: ``, // Endpoint para películas mejor valoradas
+    popularTv: ``, // Endpoint para series populares
+    upcoming: ``, // Endpoint para próximos estrenos
+    topRatedTv: ``, // Endpoint para series mejor valoradas
+    search: `` // Endpoint para búsqueda
 };
 
 // State
