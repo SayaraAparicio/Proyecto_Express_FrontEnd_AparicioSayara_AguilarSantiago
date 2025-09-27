@@ -1,10 +1,10 @@
-// API Configuration - Configura tu API aquí
-const API_KEY = ''; // Coloca tu API key aquí
-const BASE_URL = ''; // URL base de tu API
+// API 
+const API_KEY = ''; // API key 
+const BASE_URL = ''; // URL base de la API
 const IMAGE_BASE_URL = ''; // URL base para imágenes pequeñas
 const IMAGE_BASE_URL_ORIGINAL = ''; // URL base para imágenes originales
 
-// API Endpoints - Configura los endpoints de tu API
+// API Endpoints 
 const ENDPOINTS = {
     popular: ``, // Endpoint para películas populares
     topRated: ``, // Endpoint para películas mejor valoradas
