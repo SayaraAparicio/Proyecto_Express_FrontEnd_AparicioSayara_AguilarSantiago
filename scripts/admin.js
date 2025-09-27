@@ -8,12 +8,10 @@ const IMAGE_BASE_URL_ORIGINAL = 'https://image.tmdb.org/t/p/original';
 const ENDPOINTS = {
     popular: `${BASE_URL}/movie/popular`,
     topRated: `${BASE_URL}/movie/top_rated`,
-    upcoming: `${BASE_URL}/movie/upcoming`,
-    nowPlaying: `${BASE_URL}/movie/now_playing`,
     popularTv: `${BASE_URL}/tv/popular`,
+    upcoming: `${BASE_URL}/movie/upcoming`,
     topRatedTv: `${BASE_URL}/tv/top_rated`,
-    byGenre: `${BASE_URL}/discover/movie`,
-    search: `${BASE_URL}/search/movie` // 🔍 búsqueda
+    search: `${BASE_URL}/search/movie`
 };
 
 // State
@@ -33,18 +31,6 @@ async function fetchContent(endpoint) {
     }
 }
 
-async function fetchMoviesByGenre(genreId) {
-    try {
-        const response = await fetch(`${ENDPOINTS.byGenre}?api_key=${API_KEY}&language=es-ES&with_genres=${genreId}&page=1&sort_by=popularity.desc`);
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        const data = await response.json();
-        return data.results;
-    } catch (error) {
-        console.error('Error fetching movies by genre:', error);
-        return [];
-    }
-}
-
 async function searchMovies(query) {
     try {
         const response = await fetch(`${ENDPOINTS.search}?api_key=${API_KEY}&language=es-ES&query=${encodeURIComponent(query)}&page=1`);
@@ -55,20 +41,6 @@ async function searchMovies(query) {
         console.error('Error searching movies:', error);
         return [];
     }
-}
-
-// Utils
-function getGenreNames(genreIds) {
-    const GENRES = {
-        28: 'Acción', 12: 'Aventura', 16: 'Animación', 35: 'Comedia',
-        80: 'Crimen', 99: 'Documental', 18: 'Drama', 10751: 'Familia',
-        14: 'Fantasía', 36: 'Historia', 27: 'Terror', 10402: 'Música',
-        9648: 'Misterio', 10749: 'Romance', 878: 'Ciencia Ficción',
-        53: 'Suspenso', 10752: 'Guerra', 37: 'Western'
-    };
-    
-    if (!genreIds || genreIds.length === 0) return 'General';
-    return genreIds.slice(0, 2).map(id => GENRES[id] || 'General').join(' • ');
 }
 
 // UI builders
@@ -109,25 +81,12 @@ function createFeaturedCard(series, index) {
     `;
 }
 
-function renderTrack(content, trackId, isMovie = true) {
-    const track = document.getElementById(trackId);
-    if (!track) return;
-    
-    if (content.length === 0) {
-        track.innerHTML = '<p style="color: rgba(255,255,255,0.7); text-align: center; padding: 40px;">No se pudo cargar el contenido</p>';
-        return;
-    }
-
-    const html = content.map(item => createMovieCard(item, isMovie)).join('');
-    track.innerHTML = html;
-}
-
 function renderMoviesGrid(movies, containerId) {
     const container = document.getElementById(containerId);
     if (!container) return;
     
     if (movies.length === 0) {
-        container.innerHTML = '<p style="color: rgba(255,255,255,0.7); text-align: center; padding: 40px;">No se pudieron cargar las películas</p>';
+        container.innerHTML = '<p style="color: rgba(255,255,255,0.7); text-align: center; padding: 40px;">No se pudo cargar el contenido</p>';
         return;
     }
 
@@ -176,7 +135,7 @@ function updateFeaturedSection(series, index) {
 
     document.getElementById('f-year').textContent = releaseYear;
     document.getElementById('f-title').textContent = title;
-    document.getElementById('f-meta').textContent = getGenreNames(item.genre_ids);
+    document.getElementById('f-meta').textContent = 'Top 10 Series';
     document.getElementById('f-desc').textContent = item.overview || 'Descripción no disponible.';
 
     const bgImg = index % 2 === 0 ? 'featured-bg-a' : 'featured-bg-b';
@@ -189,99 +148,51 @@ function updateFeaturedSection(series, index) {
     }
 }
 
-// Navigation
-function scrollRow(trackId, direction) {
-    const track = document.getElementById(`${trackId}-track`);
-    if (!track) return;
-    
-    const scrollAmount = 220;
-    track.scrollBy({
-        left: direction * scrollAmount,
-        behavior: 'smooth'
-    });
-}
-
-function selectContent(id, isMovie) {
-    console.log(`Selected ${isMovie ? 'movie' : 'series'} ID:`, id);
-    alert(`${isMovie ? 'Película' : 'Serie'} seleccionada (ID: ${id}). Funcionalidad pendiente de implementar.`);
-}
-
 function selectFeatured(index) {
     currentFeaturedIndex = index;
     updateFeaturedSection(featuredSeries, index);
-}
-
-async function selectGenre(genreId, genreName) {
-    document.querySelectorAll('.row-section').forEach(section => {
-        section.style.display = 'none';
-    });
-    document.querySelectorAll('.section:not(#genre-section)').forEach(section => {
-        section.style.display = 'none';
-    });
-    document.getElementById('featured-section').style.display = 'none';
-
-    const genreSection = document.getElementById('genre-section');
-    genreSection.style.display = 'block';
-    document.getElementById('genre-title').textContent = `PELÍCULAS DE ${genreName.toUpperCase()}`;
-
-    document.getElementById('genre-movies').innerHTML = `
-        <div class="loading">
-            <div class="spinner"></div>
-            Cargando películas de ${genreName}...
-        </div>
-    `;
-
-    const movies = await fetchMoviesByGenre(genreId);
-    renderMoviesGrid(movies.slice(0, 20), 'genre-movies');
-
-    if (movies.length > 0) {
-        updateHeroSection(movies[0]);
-    }
-}
-
-function showAllSections() {
-    document.querySelectorAll('.row-section').forEach(section => {
-        section.style.display = 'block';
-    });
-    document.querySelectorAll('.section:not(#genre-section)').forEach(section => {
-        section.style.display = 'block';
-    });
-    document.getElementById('featured-section').style.display = 'block';
-    document.getElementById('genre-section').style.display = 'none';
 }
 
 // Initialize
 async function initializeApp() {
     try {
         const [
-            upcomingMovies,
-            popularMovies,
+            movies,
+            series,
+            upcoming,
             topRatedMovies,
-            topSeries,
-            popularSeriesData
+            topSeries
         ] = await Promise.all([
-            fetchContent(ENDPOINTS.upcoming),
             fetchContent(ENDPOINTS.popular),
+            fetchContent(ENDPOINTS.popularTv),
+            fetchContent(ENDPOINTS.upcoming),
             fetchContent(ENDPOINTS.topRated),
-            fetchContent(ENDPOINTS.topRatedTv),
-            fetchContent(ENDPOINTS.popularTv)
+            fetchContent(ENDPOINTS.topRatedTv)
         ]);
 
-        renderTrack(upcomingMovies.slice(0, 15), 'latest-track', true);
-        renderTrack([...popularMovies.slice(0, 10), ...popularSeriesData.slice(0, 10)], 'popular-content-track', true);
+        // Render películas
+        renderMoviesGrid(movies.slice(0, 12), 'movies-section');
 
-        renderMoviesGrid(popularMovies.slice(0, 12), 'popular-movies');
-        renderMoviesGrid(topRatedMovies.slice(0, 12), 'top-rated-movies');
-        renderMoviesGrid(upcomingMovies.slice(0, 12), 'upcoming-movies');
+        // Render series
+        renderMoviesGrid(series.slice(0, 12), 'series-section');
 
+        // Render populares (mezcla de ambas)
+        renderMoviesGrid([...movies.slice(0, 6), ...series.slice(0, 6)], 'popular-section');
+
+        // Render últimos lanzamientos
+        renderMoviesGrid(upcoming.slice(0, 12), 'upcoming-section');
+
+        // Hero aleatoria
+        if (topRatedMovies.length > 0) {
+            const randomIndex = Math.floor(Math.random() * topRatedMovies.length);
+            updateHeroSection(topRatedMovies[randomIndex]);
+        }
+
+        // Top 10 series
         featuredSeries = topSeries.slice(0, 10);
         renderFeaturedTrack(featuredSeries);
         if (featuredSeries.length > 0) {
             updateFeaturedSection(featuredSeries, 0);
-        }
-
-        if (popularMovies.length > 0) {
-            updateHeroSection(popularMovies[1]);
         }
 
     } catch (error) {
@@ -289,6 +200,7 @@ async function initializeApp() {
     }
 }
 
+// Rotación automática de Top 10
 function startFeaturedRotation() {
     setInterval(() => {
         if (featuredSeries.length > 0) {
@@ -408,25 +320,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeDropdowns();
     initializeHamburger();
 
-    document.querySelectorAll('.nav a:not(.dropdown-toggle):not([data-genre])').forEach(link => {
-        link.addEventListener('click', (e) => {
-            e.preventDefault();
-            const href = link.getAttribute('href');
-            
-            if (href === '#inicio') {
-                showAllSections();
-                initializeApp();
-            } else {
-                const targetId = href.substring(1);
-                const targetElement = document.querySelector(`[id*="${targetId}"]`);
-                if (targetElement) {
-                    targetElement.scrollIntoView({ behavior: 'smooth' });
-                }
-            }
-        });
-    });
-
-    // 🔍 Search functionality
+    // 🔍 Search
     const searchToggle = document.getElementById('search-toggle');
     const searchContainer = document.getElementById('search-container');
     const searchInput = document.getElementById('search-input');

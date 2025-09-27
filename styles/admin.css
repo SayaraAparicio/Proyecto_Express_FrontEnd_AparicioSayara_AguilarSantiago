@@ -412,6 +412,10 @@ body {
     gap: 20px;
 }
 
+.watchnow {
+    text-decoration: none;
+    color: white;
+}
 .btn-primary,
 .btn-secondary {
     padding: 15px 30px;
@@ -938,4 +942,84 @@ body {
         pointer-events: auto;
         display: block; 
     }
+}
+
+
+/* 📱 Responsive Hero Section */
+@media (max-width: 1024px) {
+  .hero {
+    height: auto; /* que crezca según contenido */
+    margin: 0 30px 40px 30px;
+  }
+
+  .hero-content {
+    padding: 40px 30px;
+    align-items: flex-start;
+  }
+
+  .hero-title {
+    font-size: 2.5rem; /* más pequeño en tablet */
+  }
+
+  .hero-description {
+    font-size: 1rem;
+    max-width: 100%;
+  }
+
+  .hero-buttons {
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero {
+    margin: 0 20px 30px 20px;
+    border-radius: 12px;
+  }
+
+  .hero-content {
+    padding: 30px 20px;
+    text-align: center;
+    align-items: center;
+  }
+
+  .hero-category {
+    font-size: 1rem;
+  }
+
+  .hero-title {
+    font-size: 2rem;
+    line-height: 1.2;
+  }
+
+  .hero-meta {
+    font-size: 0.9rem;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .hero-description {
+    font-size: 0.95rem;
+    margin-bottom: 20px;
+  }
+
+  .hero-buttons {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .age-rating {
+    top: 15px;
+    right: 15px;
+    font-size: 0.8rem;
+    padding: 3px 10px;
+  }
 }
