@@ -370,3 +370,467 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+// reseñas 
+
+// Sistema de reseñas - Agregar estas funciones al final de home.js
+
+// Datos mockeados para reseñas
+let mockReviews = [
+    {
+        id: 1,
+        movieId: 550,
+        movieTitle: "Fight Club",
+        userId: 1,
+        userName: "Karen González",
+        userAvatar: "K",
+        title: "Una obra maestra del cine",
+        content: "Esta película te hace cuestionar todo sobre la sociedad moderna. La actuación de Brad Pitt y Edward Norton es increíble, y el giro final te deja sin palabras.",
+        rating: 5,
+        likes: 23,
+        dislikes: 2,
+        userLiked: false,
+        userDisliked: false,
+        date: "2024-01-15",
+        helpful: 21
+    },
+    {
+        id: 2,
+        movieId: 550,
+        movieTitle: "Fight Club",
+        userId: 2,
+        userName: "Carlos Ramírez",
+        userAvatar: "C",
+        title: "Entretenida pero sobrevalorada",
+        content: "Es una buena película pero creo que está un poco sobrevalorada. La cinematografía es excelente pero la historia se siente un poco forzada en algunos momentos.",
+        rating: 3,
+        likes: 8,
+        dislikes: 12,
+        userLiked: false,
+        userDisliked: false,
+        date: "2024-01-20",
+        helpful: -4
+    },
+    {
+        id: 3,
+        movieId: 550,
+        movieTitle: "Fight Club",
+        userId: 3,
+        userName: "Ana Martín",
+        userAvatar: "A",
+        title: "Imprescindible",
+        content: "Una de esas películas que tienes que ver al menos una vez en la vida. David Fincher demuestra por qué es uno de los mejores directores contemporáneos.",
+        rating: 4,
+        likes: 15,
+        dislikes: 1,
+        userLiked: true,
+        userDisliked: false,
+        date: "2024-02-01",
+        helpful: 14
+    }
+];
+
+// Variables para el sistema de reseñas
+let currentMovieForReview = null;
+let userRating = 0;
+
+// Función para abrir el modal de reseña
+function openReviewModal(movieId, movieTitle, posterUrl) {
+    currentMovieForReview = { id: movieId, title: movieTitle, poster: posterUrl };
+    
+    // Crear o mostrar el modal
+    createReviewModal(movieTitle, posterUrl);
+    
+    // Resetear valores
+    userRating = 0;
+    updateStarRating(0);
+    document.getElementById('review-title').value = '';
+    document.getElementById('review-content').value = '';
+    
+    document.getElementById('review-modal').style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+}
+
+// Función para crear el modal de reseña
+function createReviewModal(movieTitle, posterUrl) {
+    // Verificar si ya existe el modal
+    let modal = document.getElementById('review-modal');
+    if (modal) {
+        modal.querySelector('.movie-title-modal').textContent = movieTitle;
+        modal.querySelector('.movie-poster-modal').src = posterUrl || 'https://via.placeholder.com/100x150?text=Sin+Imagen';
+        return;
+    }
+
+    // Crear el modal
+    const modalHTML = `
+        <div class="modal-overlay" id="review-modal">
+            <div class="modal-content review-modal">
+                <div class="modal-header">
+                    <h2>Escribir Reseña</h2>
+                    <button class="close-modal" onclick="closeReviewModal()">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
+                
+                <div class="modal-body">
+                    <div class="movie-info-modal">
+                        <img class="movie-poster-modal" src="${posterUrl || 'https://via.placeholder.com/100x150?text=Sin+Imagen'}" alt="${movieTitle}">
+                        <div class="movie-details-modal">
+                            <h3 class="movie-title-modal">${movieTitle}</h3>
+                            <p>Comparte tu opinión sobre esta película</p>
+                        </div>
+                    </div>
+
+                    <div class="rating-section">
+                        <h4>Tu Calificación</h4>
+                        <div class="star-rating" id="star-rating">
+                            ${[1,2,3,4,5].map(num => `
+                                <span class="star-input" data-rating="${num}" onclick="setRating(${num})">★</span>
+                            `).join('')}
+                        </div>
+                        <p class="rating-text" id="rating-text">Haz clic en las estrellas para calificar</p>
+                    </div>
+
+                    <div class="review-form">
+                        <div class="form-group">
+                            <label for="review-title">Título de tu reseña</label>
+                            <input type="text" id="review-title" placeholder="Ej: Una obra maestra del cine" maxlength="100">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="review-content">Tu reseña</label>
+                            <textarea id="review-content" placeholder="Comparte tu opinión sobre la película..." maxlength="500" rows="4"></textarea>
+                            <span class="char-counter">0/500 caracteres</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn-cancel" onclick="closeReviewModal()">Cancelar</button>
+                    <button class="btn-submit" onclick="submitReview()">Publicar Reseña</button>
+                </div>
+            </div>
+        </div>
+    `;
+
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+    
+    // Agregar event listener para el contador de caracteres
+    const textarea = document.getElementById('review-content');
+    const counter = document.querySelector('.char-counter');
+    
+    textarea.addEventListener('input', function() {
+        const count = this.value.length;
+        counter.textContent = `${count}/500 caracteres`;
+        counter.style.color = count > 450 ? '#ff6b6b' : 'rgba(255,255,255,0.6)';
+    });
+}
+
+// Función para establecer la calificación
+function setRating(rating) {
+    userRating = rating;
+    updateStarRating(rating);
+    
+    const ratingTexts = [
+        'Haz clic en las estrellas para calificar',
+        'Terrible',
+        'Mala',
+        'Regular', 
+        'Buena',
+        'Excelente'
+    ];
+    
+    document.getElementById('rating-text').textContent = ratingTexts[rating];
+}
+
+// Función para actualizar la visualización de estrellas
+function updateStarRating(rating) {
+    const stars = document.querySelectorAll('.star-input');
+    stars.forEach((star, index) => {
+        if (index < rating) {
+            star.classList.add('active');
+        } else {
+            star.classList.remove('active');
+        }
+    });
+}
+
+// Función para cerrar el modal
+function closeReviewModal() {
+    const modal = document.getElementById('review-modal');
+    if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+}
+
+// Función para enviar la reseña
+function submitReview() {
+    if (!currentMovieForReview) return;
+    
+    const title = document.getElementById('review-title').value.trim();
+    const content = document.getElementById('review-content').value.trim();
+    
+    // Validaciones
+    if (userRating === 0) {
+        alert('Por favor, califica la película antes de continuar');
+        return;
+    }
+    
+    if (!title) {
+        alert('Por favor, escribe un título para tu reseña');
+        return;
+    }
+    
+    if (content.length < 20) {
+        alert('Tu reseña debe tener al menos 20 caracteres');
+        return;
+    }
+    
+    // Crear nueva reseña
+    const newReview = {
+        id: Date.now(),
+        movieId: currentMovieForReview.id,
+        movieTitle: currentMovieForReview.title,
+        userId: 1, // Usuario actual (mockeado)
+        userName: "Usuario Actual",
+        userAvatar: "U",
+        title: title,
+        content: content,
+        rating: userRating,
+        likes: 0,
+        dislikes: 0,
+        userLiked: false,
+        userDisliked: false,
+        date: new Date().toISOString().split('T')[0],
+        helpful: 0
+    };
+    
+    // Agregar a las reseñas mockeadas
+    mockReviews.unshift(newReview);
+    
+    // Mostrar notificación de éxito
+    showNotification('¡Reseña publicada exitosamente!', 'success');
+    
+    // Cerrar modal
+    closeReviewModal();
+    
+    // Actualizar la vista de reseñas si está visible
+    if (document.getElementById('reviews-section')) {
+        displayMovieReviews(currentMovieForReview.id);
+    }
+}
+
+// Función para mostrar reseñas de una película
+function displayMovieReviews(movieId) {
+    const movieReviews = mockReviews.filter(review => review.movieId == movieId);
+    
+    // Crear o actualizar la sección de reseñas
+    let reviewsSection = document.getElementById('reviews-section');
+    if (!reviewsSection) {
+        reviewsSection = document.createElement('section');
+        reviewsSection.id = 'reviews-section';
+        reviewsSection.className = 'section';
+        document.querySelector('.main-content').appendChild(reviewsSection);
+    }
+    
+    const avgRating = movieReviews.length > 0 
+        ? (movieReviews.reduce((sum, review) => sum + review.rating, 0) / movieReviews.length).toFixed(1)
+        : 0;
+    
+    reviewsSection.innerHTML = `
+        <div class="reviews-header">
+            <h2 class="section-title">RESEÑAS DE USUARIOS</h2>
+            <div class="reviews-stats">
+                <div class="avg-rating">
+                    <span class="rating-number">${avgRating}</span>
+                    <div class="rating-stars">
+                        ${[1,2,3,4,5].map(num => 
+                            `<span class="star ${num <= Math.round(avgRating) ? 'active' : ''}">★</span>`
+                        ).join('')}
+                    </div>
+                    <span class="reviews-count">(${movieReviews.length} reseñas)</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="reviews-container">
+            ${movieReviews.length === 0 
+                ? '<p class="no-reviews">Sé el primero en dejar una reseña</p>'
+                : movieReviews.map(review => createReviewCard(review)).join('')
+            }
+        </div>
+    `;
+    
+    reviewsSection.scrollIntoView({ behavior: 'smooth' });
+}
+
+// Función para crear una tarjeta de reseña
+function createReviewCard(review) {
+    const reviewDate = new Date(review.date).toLocaleDateString('es-ES', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
+    
+    return `
+        <div class="review-card">
+            <div class="review-header">
+                <div class="reviewer-info">
+                    <div class="reviewer-avatar">${review.userAvatar}</div>
+                    <div class="reviewer-details">
+                        <h4 class="reviewer-name">${review.userName}</h4>
+                        <div class="review-rating">
+                            ${[1,2,3,4,5].map(num => 
+                                `<span class="star ${num <= review.rating ? 'active' : ''}">★</span>`
+                            ).join('')}
+                            <span class="rating-number">${review.rating}/5</span>
+                        </div>
+                        <span class="review-date">${reviewDate}</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="review-content">
+                <h3 class="review-title">${review.title}</h3>
+                <p class="review-text">${review.content}</p>
+            </div>
+            
+            <div class="review-actions">
+                <button class="action-btn ${review.userLiked ? 'liked' : ''}" onclick="toggleReviewLike(${review.id}, 'like')">
+                    <i class="bi bi-hand-thumbs-up"></i>
+                    <span>${review.likes}</span>
+                </button>
+                <button class="action-btn ${review.userDisliked ? 'disliked' : ''}" onclick="toggleReviewLike(${review.id}, 'dislike')">
+                    <i class="bi bi-hand-thumbs-down"></i>
+                    <span>${review.dislikes}</span>
+                </button>
+                <span class="helpful-text">
+                    ${review.helpful > 0 ? `${review.helpful} personas encontraron esto útil` : ''}
+                </span>
+            </div>
+        </div>
+    `;
+}
+
+// Función para dar like/dislike a una reseña
+function toggleReviewLike(reviewId, action) {
+    const review = mockReviews.find(r => r.id === reviewId);
+    if (!review) return;
+    
+    if (action === 'like') {
+        if (review.userLiked) {
+            // Quitar like
+            review.likes--;
+            review.userLiked = false;
+        } else {
+            // Dar like
+            review.likes++;
+            review.userLiked = true;
+            
+            // Si tenía dislike, quitarlo
+            if (review.userDisliked) {
+                review.dislikes--;
+                review.userDisliked = false;
+            }
+        }
+    } else if (action === 'dislike') {
+        if (review.userDisliked) {
+            // Quitar dislike
+            review.dislikes--;
+            review.userDisliked = false;
+        } else {
+            // Dar dislike
+            review.dislikes++;
+            review.userDisliked = true;
+            
+            // Si tenía like, quitarlo
+            if (review.userLiked) {
+                review.likes--;
+                review.userLiked = false;
+            }
+        }
+    }
+    
+    // Recalcular helpful
+    review.helpful = review.likes - review.dislikes;
+    
+    // Actualizar la vista
+    displayMovieReviews(review.movieId);
+    
+    // Mostrar feedback
+    const message = action === 'like' 
+        ? (review.userLiked ? 'Te gusta esta reseña' : 'Like removido')
+        : (review.userDisliked ? 'No te gusta esta reseña' : 'Dislike removido');
+    
+    showNotification(message, 'info');
+}
+
+// Función para mostrar notificaciones
+function showNotification(message, type = 'info') {
+    // Eliminar notificaciones anteriores
+    const existingNotifications = document.querySelectorAll('.notification');
+    existingNotifications.forEach(notif => notif.remove());
+    
+    const notification = document.createElement('div');
+    notification.className = 'notification';
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 15px 25px;
+        background: ${type === 'success' ? 'rgba(16, 185, 129, 0.9)' : type === 'info' ? 'rgba(59, 130, 246, 0.9)' : 'rgba(239, 68, 68, 0.9)'};
+        color: white;
+        border-radius: 10px;
+        z-index: 10000;
+        font-weight: 600;
+        backdrop-filter: blur(10px);
+        transform: translateX(400px);
+        transition: transform 0.3s ease;
+    `;
+    notification.textContent = message;
+    document.body.appendChild(notification);
+    
+    // Animación de entrada
+    setTimeout(() => {
+        notification.style.transform = 'translateX(0)';
+    }, 100);
+    
+    // Remover después de 3 segundos
+    setTimeout(() => {
+        notification.style.transform = 'translateX(400px)';
+        setTimeout(() => notification.remove(), 300);
+    }, 3000);
+}
+
+// Modificar la función selectContent para incluir el botón de reseña
+function selectContent(movieId, isMovie) {
+    // Aquí iría la lógica para mostrar detalles del contenido
+    // Por ahora, simulamos datos básicos
+    const movieTitle = "Película Seleccionada";
+    const posterUrl = "https://via.placeholder.com/100x150?text=Poster";
+    
+    // Mostrar opciones
+    const options = confirm(`¿Qué quieres hacer con "${movieTitle}"?\n\nOK = Ver Reseñas\nCancelar = Escribir Reseña`);
+    
+    if (options) {
+        displayMovieReviews(movieId);
+    } else {
+        openReviewModal(movieId, movieTitle, posterUrl);
+    }
+}
+
+// Cerrar modal al hacer clic fuera
+document.addEventListener('click', function(e) {
+    const modal = document.getElementById('review-modal');
+    if (modal && e.target === modal) {
+        closeReviewModal();
+    }
+});
+
+// Cerrar modal con tecla Escape
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closeReviewModal();
+    }
+});
