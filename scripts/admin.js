@@ -1,217 +1,642 @@
-// API 
-const API_KEY = ''; // API key 
-const BASE_URL = ''; // URL base de la API
-const IMAGE_BASE_URL = ''; // URL base para imágenes pequeñas
-const IMAGE_BASE_URL_ORIGINAL = ''; // URL base para imágenes originales
+// Datos mockeados para panel
+let mockUsers = [
+    {
+        id: 1,
+        name: 'Karen González',
+        email: 'karen@karenflix.com',
+        role: 'user',
+        status: 'active',
+        reviews: 15,
+        registrationDate: '2024-01-15',
+        avatar: 'K'
+    },
+    {
+        id: 2,
+        name: 'Juan Pérez',
+        email: 'juan@email.com',
+        role: 'user',
+        status: 'active',
+        reviews: 8,
+        registrationDate: '2024-02-20',
+        avatar: 'J'
+    },
+    {
+        id: 3,
+        name: 'Ana López',
+        email: 'ana@email.com',
+        role: 'user',
+        status: 'inactive',
+        reviews: 23,
+        registrationDate: '2024-01-10',
+        avatar: 'A'
+    },
+    {
+        id: 4,
+        name: 'Carlos Admin',
+        email: 'admin@karenflix.com',
+        role: 'admin',
+        status: 'active',
+        reviews: 45,
+        registrationDate: '2023-12-01',
+        avatar: 'C'
+    },
+    {
+        id: 5,
+        name: 'María Torres',
+        email: 'maria@email.com',
+        role: 'user',
+        status: 'active',
+        reviews: 12,
+        registrationDate: '2024-03-05',
+        avatar: 'M'
+    }
+];
 
-// API Endpoints 
-const ENDPOINTS = {
-    popular: ``, // Endpoint para películas populares
-    topRated: ``, // Endpoint para películas mejor valoradas
-    popularTv: ``, // Endpoint para series populares
-    upcoming: ``, // Endpoint para próximos estrenos
-    topRatedTv: ``, // Endpoint para series mejor valoradas
-    search: `` // Endpoint para búsqueda
+let mockMovies = [
+    {
+        id: 1,
+        title: 'Avatar: El Camino del Agua',
+        category: 'Ciencia Ficción',
+        year: 2022,
+        status: 'approved',
+        rating: 4.5,
+        reviews: 89,
+        poster: 'https://image.tmdb.org/t/p/w500/t6HIqrRAclMCA60NsSmeqe9RmNV.jpg',
+        type: 'movie'
+    },
+    {
+        id: 2,
+        title: 'The Last of Us',
+        category: 'Drama',
+        year: 2023,
+        status: 'approved',
+        rating: 4.8,
+        reviews: 156,
+        poster: 'https://image.tmdb.org/t/p/w500/uKvVjHNqB5VmOrdxqAt2F7J78ED.jpg',
+        type: 'series'
+    },
+    {
+        id: 3,
+        title: 'John Wick 4',
+        category: 'Acción',
+        year: 2023,
+        status: 'pending',
+        rating: 4.3,
+        reviews: 67,
+        poster: 'https://image.tmdb.org/t/p/w500/vZloFAK7NmvMGKE7VkF5UHaz0I.jpg',
+        type: 'movie'
+    },
+    {
+        id: 4,
+        title: 'Wednesday',
+        category: 'Terror',
+        year: 2022,
+        status: 'approved',
+        rating: 4.2,
+        reviews: 234,
+        poster: 'https://image.tmdb.org/t/p/w500/9PFonBhy4cQy7Jz20NpMygczOkv.jpg',
+        type: 'series'
+    },
+    {
+        id: 5,
+        title: 'Black Panther: Wakanda Forever',
+        category: 'Acción',
+        year: 2022,
+        status: 'approved',
+        rating: 4.0,
+        reviews: 145,
+        poster: 'https://image.tmdb.org/t/p/w500/sv1xJUazXeYqALzczSZ3O6nkH75.jpg',
+        type: 'movie'
+    }
+];
+
+let mockReviews = [
+    {
+        id: 1,
+        userId: 1,
+        userName: 'Karen González',
+        movieId: 1,
+        movieTitle: 'Avatar: El Camino del Agua',
+        title: 'Increíble experiencia visual',
+        content: 'Una película que te transporta a otro mundo. Los efectos visuales son impresionantes...',
+        rating: 4.5,
+        likes: 23,
+        dislikes: 2,
+        date: '2024-01-20',
+        status: 'approved'
+    },
+    {
+        id: 2,
+        userId: 2,
+        userName: 'Juan Pérez',
+        movieId: 2,
+        movieTitle: 'The Last of Us',
+        title: 'Mejor que el juego',
+        content: 'No esperaba que fuera tan buena. La actuación es perfecta y la historia te atrapa...',
+        rating: 5.0,
+        likes: 45,
+        dislikes: 1,
+        date: '2024-02-15',
+        status: 'approved'
+    },
+    {
+        id: 3,
+        userId: 3,
+        userName: 'Ana López',
+        movieId: 3,
+        movieTitle: 'John Wick 4',
+        title: 'Acción pura',
+        content: 'Si te gusta la acción, esta película es para ti. Keanu Reeves sigue siendo increíble...',
+        rating: 4.3,
+        likes: 12,
+        dislikes: 0,
+        date: '2024-03-10',
+        status: 'pending'
+    },
+    {
+        id: 4,
+        userId: 5,
+        userName: 'María Torres',
+        movieId: 4,
+        movieTitle: 'Wednesday',
+        title: 'Jenna Ortega brillante',
+        content: 'La interpretación de Jenna Ortega es perfecta. La serie tiene el tono perfecto...',
+        rating: 4.2,
+        likes: 67,
+        dislikes: 3,
+        date: '2024-01-25',
+        status: 'approved'
+    },
+    {
+        id: 5,
+        userId: 1,
+        userName: 'Karen González',
+        movieId: 5,
+        movieTitle: 'Black Panther: Wakanda Forever',
+        title: 'Un homenaje emotivo',
+        content: 'Difícil tarea hacer una secuela sin Chadwick Boseman, pero lo lograron...',
+        rating: 4.0,
+        likes: 34,
+        dislikes: 5,
+        date: '2024-02-28',
+        status: 'approved'
+    }
+];
+
+let mockCategories = [
+    { id: 1, name: 'Acción', count: 45, status: 'active' },
+    { id: 2, name: 'Drama', count: 67, status: 'active' },
+    { id: 3, name: 'Comedia', count: 34, status: 'active' },
+    { id: 4, name: 'Ciencia Ficción', count: 28, status: 'active' },
+    { id: 5, name: 'Terror', count: 19, status: 'active' },
+    { id: 6, name: 'Romance', count: 23, status: 'inactive' },
+    { id: 7, name: 'Animación', count: 15, status: 'active' },
+    { id: 8, name: 'Documental', count: 12, status: 'active' }
+];
+
+// para buscar
+let currentTab = 'users';
+let searchFilters = {
+    users: '',
+    movies: '',
+    reviews: '',
+    categories: ''
 };
 
-// State
-let currentFeaturedIndex = 0;
-let featuredSeries = [];
-
-// Fetch helpers
-async function fetchContent(endpoint) {
-    try {
-        const response = await fetch(`${endpoint}?api_key=${API_KEY}&language=es-ES&page=1`);
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        const data = await response.json();
-        return data.results;
-    } catch (error) {
-        console.error('Error fetching content:', error);
-        return [];
-    }
+// inicializar panel
+function initializeAdminPanel() {
+    updateStatistics();
+    renderUsersTable();
+    renderMoviesTable();
+    renderReviewsTable();
+    renderCategoriesTable();
+    initializeSearch();
+    initializeAdminDropdowns();
+    initializeAdminHamburger();
 }
 
-async function searchMovies(query) {
-    try {
-        const response = await fetch(`${ENDPOINTS.search}?api_key=${API_KEY}&language=es-ES&query=${encodeURIComponent(query)}&page=1`);
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        const data = await response.json();
-        return data.results;
-    } catch (error) {
-        console.error('Error searching movies:', error);
-        return [];
-    }
+// para actualizar
+function updateStatistics() {
+    document.getElementById('total-users').textContent = mockUsers.length;
+    document.getElementById('total-movies').textContent = mockMovies.length;
+    document.getElementById('total-reviews').textContent = mockReviews.length;
+    document.getElementById('pending-approvals').textContent = mockMovies.filter(m => m.status === 'pending').length + mockReviews.filter(r => r.status === 'pending').length;
 }
 
-// UI builders
-function createMovieCard(item, isMovie = true) {
-    const title = item.title || item.name;
-    const releaseDate = item.release_date || item.first_air_date;
-    const releaseYear = releaseDate ? new Date(releaseDate).getFullYear() : 'N/A';
-    const rating = item.vote_average ? item.vote_average.toFixed(1) : 'N/A';
-    const posterUrl = item.poster_path ? `${IMAGE_BASE_URL}${item.poster_path}` : 'https://via.placeholder.com/200x300?text=Sin+Imagen';
-
-    return `
-        <article class="movie-card" onclick="selectContent(${item.id}, ${isMovie})">
-            <div class="movie-poster" style="background-image: url('${posterUrl}')">
-                <div class="movie-rating">★ ${rating}</div>
-            </div>
-            <div class="movie-info">
-                <h3 class="movie-title">${title}</h3>
-                <p class="movie-year">${releaseYear}</p>
-            </div>
-        </article>
-    `;
-}
-
-function createFeaturedCard(series, index) {
-    const title = series.name || series.title;
-    const releaseYear = series.first_air_date ? new Date(series.first_air_date).getFullYear() : 'N/A';
-    const rating = series.vote_average ? series.vote_average.toFixed(1) : 'N/A';
-    const posterUrl = series.poster_path ? `${IMAGE_BASE_URL}${series.poster_path}` : 'https://via.placeholder.com/80x80?text=Sin+Imagen';
-
-    return `
-        <article class="movie-card" onclick="selectFeatured(${index})">
-            <div class="movie-poster" style="background-image: url('${posterUrl}')"></div>
-            <div class="movie-info">
-                <h3 class="movie-title">#${index + 1} ${title}</h3>
-                <p class="movie-year">★ ${rating} • ${releaseYear}</p>
-            </div>
-        </article>
-    `;
-}
-
-function renderMoviesGrid(movies, containerId) {
-    const container = document.getElementById(containerId);
-    if (!container) return;
+// al cambiar pestaña
+function switchTab(tabName) {
+    // Ocultar todas las pestañas
+    document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.style.display = 'none';
+    });
     
-    if (movies.length === 0) {
-        container.innerHTML = '<p style="color: rgba(255,255,255,0.7); text-align: center; padding: 40px;">No se pudo cargar el contenido</p>';
-        return;
-    }
-
-    const moviesHtml = movies.map(movie => createMovieCard(movie, true)).join('');
-    container.innerHTML = moviesHtml;
-}
-
-function renderFeaturedTrack(series) {
-    const track = document.getElementById('featured-track');
-    if (!track || series.length === 0) return;
-
-    const html = series.slice(0, 10).map((item, index) => createFeaturedCard(item, index)).join('');
-    track.innerHTML = html;
-}
-
-function updateHeroSection(item) {
-    if (!item) return;
-
-    const title = item.title || item.name;
-    const releaseDate = item.release_date || item.first_air_date;
-    const releaseYear = releaseDate ? new Date(releaseDate).getFullYear() : 'N/A';
-    const backdropUrl = item.backdrop_path ? `${IMAGE_BASE_URL_ORIGINAL}${item.backdrop_path}` : '';
-    const rating = item.vote_average ? Math.round(item.vote_average / 2) : 5;
-
-    document.getElementById('hero-title').textContent = title;
-    document.getElementById('hero-year').textContent = releaseYear;
-    document.getElementById('hero-description').textContent = item.overview || 'Descripción no disponible.';
+    // Remover clase active de todos los botones
+    document.querySelectorAll('.admin-tab').forEach(btn => {
+        btn.classList.remove('active');
+    });
     
-    if (backdropUrl) {
-        document.getElementById('hero-bg').style.backgroundImage = `url('${backdropUrl}')`;
+    // Mostrar pestaña activa
+    const activeTab = document.getElementById(`${tabName}-tab`);
+    if (activeTab) {
+        activeTab.style.display = 'block';
     }
+    
+    // const para buscar el botón activo
+    const buttons = document.querySelectorAll('.admin-tab');
+    buttons.forEach(btn => {
+        if (btn.textContent.toLowerCase().includes(tabName) || 
+            (tabName === 'users' && btn.textContent.includes('Usuarios')) ||
+            (tabName === 'movies' && btn.textContent.includes('Películas')) ||
+            (tabName === 'reviews' && btn.textContent.includes('Reseñas')) ||
+            (tabName === 'categories' && btn.textContent.includes('Categorías'))) {
+            btn.classList.add('active');
+        }
+    });
+    
+    currentTab = tabName;
+    
+    // cerrar automatico los dropdowns
+    const genresDropdown = document.querySelector('.dropdown');
+    const profileDropdown = document.querySelector('.profile-dropdown');
+    if (genresDropdown) genresDropdown.classList.remove('active');
+    if (profileDropdown) profileDropdown.classList.remove('active');
+}
 
-    const stars = document.querySelectorAll('#hero-rating .star');
-    stars.forEach((star, index) => {
-        star.style.color = index < rating ? '#ffd700' : '#555';
+// tabla de usuarios
+function renderUsersTable() {
+    const tbody = document.getElementById('users-table-body');
+    if (!tbody) return;
+    
+    const filteredUsers = mockUsers.filter(user => 
+        user.name.toLowerCase().includes(searchFilters.users.toLowerCase()) ||
+        user.email.toLowerCase().includes(searchFilters.users.toLowerCase())
+    );
+    
+    tbody.innerHTML = filteredUsers.map(user => `
+        <tr>
+            <td>
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <div class="user-avatar">${user.avatar}</div>
+                    <span>${user.name}</span>
+                </div>
+            </td>
+            <td>${user.email}</td>
+            <td>
+                <span class="status-badge ${user.role === 'admin' ? 'status-pending' : 'status-active'}">${user.role}</span>
+            </td>
+            <td>
+                <span class="status-badge ${user.status === 'active' ? 'status-active' : 'status-inactive'}">${user.status}</span>
+            </td>
+            <td>${user.reviews}</td>
+            <td>${formatDate(user.registrationDate)}</td>
+            <td>
+                <button class="action-btn btn-edit" onclick="editUser(${user.id})">
+                    <i class="bi bi-pencil"></i>
+                </button>
+                <button class="action-btn btn-delete" onclick="deleteUser(${user.id})">
+                    <i class="bi bi-trash"></i>
+                </button>
+                ${user.status === 'active' ? 
+                    `<button class="action-btn btn-delete" onclick="toggleUserStatus(${user.id}, 'inactive')">
+                        <i class="bi bi-pause"></i>
+                    </button>` :
+                    `<button class="action-btn btn-approve" onclick="toggleUserStatus(${user.id}, 'active')">
+                        <i class="bi bi-play"></i>
+                    </button>`
+                }
+            </td>
+        </tr>
+    `).join('');
+}
+
+// Renderizar tabla de películas
+function renderMoviesTable() {
+    const tbody = document.getElementById('movies-table-body');
+    if (!tbody) return;
+    
+    const filteredMovies = mockMovies.filter(movie => 
+        movie.title.toLowerCase().includes(searchFilters.movies.toLowerCase()) ||
+        movie.category.toLowerCase().includes(searchFilters.movies.toLowerCase())
+    );
+    
+    tbody.innerHTML = filteredMovies.map(movie => `
+        <tr>
+            <td>
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <img src="${movie.poster}" alt="${movie.title}" class="movie-poster">
+                    <div>
+                        <strong>${movie.title}</strong>
+                        <br>
+                        <small>${movie.type === 'movie' ? 'Película' : 'Serie'}</small>
+                    </div>
+                </div>
+            </td>
+            <td>${movie.category}</td>
+            <td>${movie.year}</td>
+            <td>
+                <span class="status-badge ${movie.status === 'approved' ? 'status-active' : 'status-pending'}">${movie.status}</span>
+            </td>
+            <td>
+                <span class="rating-stars">★</span> ${movie.rating}
+            </td>
+            <td>${movie.reviews} reseñas</td>
+            <td>
+                <button class="action-btn btn-edit" onclick="editMovie(${movie.id})">
+                    <i class="bi bi-pencil"></i>
+                </button>
+                ${movie.status === 'pending' ? 
+                    `<button class="action-btn btn-approve" onclick="approveMovie(${movie.id})">
+                        <i class="bi bi-check"></i>
+                    </button>` : ''
+                }
+                <button class="action-btn btn-delete" onclick="deleteMovie(${movie.id})">
+                    <i class="bi bi-trash"></i>
+                </button>
+            </td>
+        </tr>
+    `).join('');
+}
+
+// Renderizar tabla de reseñas
+function renderReviewsTable() {
+    const tbody = document.getElementById('reviews-table-body');
+    if (!tbody) return;
+    
+    const filteredReviews = mockReviews.filter(review => 
+        review.title.toLowerCase().includes(searchFilters.reviews.toLowerCase()) ||
+        review.userName.toLowerCase().includes(searchFilters.reviews.toLowerCase()) ||
+        review.movieTitle.toLowerCase().includes(searchFilters.reviews.toLowerCase())
+    );
+    
+    tbody.innerHTML = filteredReviews.map(review => `
+        <tr>
+            <td>
+                <div>
+                    <strong>${review.title}</strong>
+                    <br>
+                    <small>por ${review.userName}</small>
+                </div>
+            </td>
+            <td>${review.movieTitle}</td>
+            <td>
+                <span class="rating-stars">★</span> ${review.rating}
+            </td>
+            <td>${review.likes} likes, ${review.dislikes} dislikes</td>
+            <td>${formatDate(review.date)}</td>
+            <td>
+                <span class="status-badge ${review.status === 'approved' ? 'status-active' : 'status-pending'}">${review.status}</span>
+            </td>
+            <td>
+                <button class="action-btn btn-edit" onclick="viewReview(${review.id})">
+                    <i class="bi bi-eye"></i>
+                </button>
+                ${review.status === 'pending' ? 
+                    `<button class="action-btn btn-approve" onclick="approveReview(${review.id})">
+                        <i class="bi bi-check"></i>
+                    </button>` : ''
+                }
+                <button class="action-btn btn-delete" onclick="deleteReview(${review.id})">
+                    <i class="bi bi-trash"></i>
+                </button>
+            </td>
+        </tr>
+    `).join('');
+}
+
+// Renderizar tabla de categorías
+function renderCategoriesTable() {
+    const tbody = document.getElementById('categories-table-body');
+    if (!tbody) return;
+    
+    const filteredCategories = mockCategories.filter(category => 
+        category.name.toLowerCase().includes(searchFilters.categories.toLowerCase())
+    );
+    
+    tbody.innerHTML = filteredCategories.map(category => `
+        <tr>
+            <td>${category.name}</td>
+            <td>${category.count} títulos</td>
+            <td>
+                <span class="status-badge ${category.status === 'active' ? 'status-active' : 'status-inactive'}">${category.status}</span>
+            </td>
+            <td>
+                <button class="action-btn btn-edit" onclick="editCategory(${category.id})">
+                    <i class="bi bi-pencil"></i>
+                </button>
+                <button class="action-btn btn-delete" onclick="deleteCategory(${category.id})">
+                    <i class="bi bi-trash"></i>
+                </button>
+                ${category.status === 'active' ? 
+                    `<button class="action-btn btn-delete" onclick="toggleCategoryStatus(${category.id}, 'inactive')">
+                        <i class="bi bi-pause"></i>
+                    </button>` :
+                    `<button class="action-btn btn-approve" onclick="toggleCategoryStatus(${category.id}, 'active')">
+                        <i class="bi bi-play"></i>
+                    </button>`
+                }
+            </td>
+        </tr>
+    `).join('');
+}
+
+// Funciones de acciones de usuario
+function editUser(userId) {
+    const user = mockUsers.find(u => u.id === userId);
+    if (user) {
+        const newName = prompt('Nuevo nombre:', user.name);
+        const newEmail = prompt('Nuevo email:', user.email);
+        
+        if (newName && newEmail) {
+            user.name = newName;
+            user.email = newEmail;
+            renderUsersTable();
+            showNotification('Usuario actualizado correctamente', 'success');
+        }
+    }
+}
+
+function deleteUser(userId) {
+    if (confirm('¿Estás seguro de eliminar este usuario?')) {
+        mockUsers = mockUsers.filter(u => u.id !== userId);
+        renderUsersTable();
+        updateStatistics();
+        showNotification('Usuario eliminado correctamente', 'success');
+    }
+}
+
+function toggleUserStatus(userId, newStatus) {
+    const user = mockUsers.find(u => u.id === userId);
+    if (user) {
+        user.status = newStatus;
+        renderUsersTable();
+        showNotification(`Usuario ${newStatus === 'active' ? 'activado' : 'desactivado'} correctamente`, 'success');
+    }
+}
+
+// Funciones de acciones de películas
+function editMovie(movieId) {
+    const movie = mockMovies.find(m => m.id === movieId);
+    if (movie) {
+        const newTitle = prompt('Nuevo título:', movie.title);
+        const newCategory = prompt('Nueva categoría:', movie.category);
+        
+        if (newTitle && newCategory) {
+            movie.title = newTitle;
+            movie.category = newCategory;
+            renderMoviesTable();
+            showNotification('Película actualizada correctamente', 'success');
+        }
+    }
+}
+
+function approveMovie(movieId) {
+    const movie = mockMovies.find(m => m.id === movieId);
+    if (movie) {
+        movie.status = 'approved';
+        renderMoviesTable();
+        updateStatistics();
+        showNotification('Película aprobada correctamente', 'success');
+    }
+}
+
+function deleteMovie(movieId) {
+    if (confirm('¿Estás seguro de eliminar esta película/serie?')) {
+        mockMovies = mockMovies.filter(m => m.id !== movieId);
+        renderMoviesTable();
+        updateStatistics();
+        showNotification('Película eliminada correctamente', 'success');
+    }
+}
+
+// Funciones de acciones de reseñas
+function viewReview(reviewId) {
+    const review = mockReviews.find(r => r.id === reviewId);
+    if (review) {
+        alert(`Reseña: ${review.title}\n\nContenido: ${review.content}\n\nRating: ${review.rating}/5\nPor: ${review.userName}`);
+    }
+}
+
+function approveReview(reviewId) {
+    const review = mockReviews.find(r => r.id === reviewId);
+    if (review) {
+        review.status = 'approved';
+        renderReviewsTable();
+        updateStatistics();
+        showNotification('Reseña aprobada correctamente', 'success');
+    }
+}
+
+function deleteReview(reviewId) {
+    if (confirm('¿Estás seguro de eliminar esta reseña?')) {
+        mockReviews = mockReviews.filter(r => r.id !== reviewId);
+        renderReviewsTable();
+        updateStatistics();
+        showNotification('Reseña eliminada correctamente', 'success');
+    }
+}
+
+// Funciones de acciones de categorías
+function editCategory(categoryId) {
+    const category = mockCategories.find(c => c.id === categoryId);
+    if (category) {
+        const newName = prompt('Nuevo nombre de categoría:', category.name);
+        if (newName) {
+            category.name = newName;
+            renderCategoriesTable();
+            showNotification('Categoría actualizada correctamente', 'success');
+        }
+    }
+}
+
+function deleteCategory(categoryId) {
+    if (confirm('¿Estás seguro de eliminar esta categoría?')) {
+        mockCategories = mockCategories.filter(c => c.id !== categoryId);
+        renderCategoriesTable();
+        showNotification('Categoría eliminada correctamente', 'success');
+    }
+}
+
+function toggleCategoryStatus(categoryId, newStatus) {
+    const category = mockCategories.find(c => c.id === categoryId);
+    if (category) {
+        category.status = newStatus;
+        renderCategoriesTable();
+        showNotification(`Categoría ${newStatus === 'active' ? 'activada' : 'desactivada'} correctamente`, 'success');
+    }
+}
+
+// Funciones de búsqueda
+function initializeSearch() {
+    const searchInputs = ['users-search', 'movies-search', 'reviews-search', 'categories-search'];
+    
+    searchInputs.forEach(inputId => {
+        const input = document.getElementById(inputId);
+        if (input) {
+            const tabName = inputId.split('-')[0];
+            input.addEventListener('input', (e) => {
+                searchFilters[tabName] = e.target.value;
+                switch(tabName) {
+                    case 'users':
+                        renderUsersTable();
+                        break;
+                    case 'movies':
+                        renderMoviesTable();
+                        break;
+                    case 'reviews':
+                        renderReviewsTable();
+                        break;
+                    case 'categories':
+                        renderCategoriesTable();
+                        break;
+                }
+            });
+        }
     });
 }
 
-function updateFeaturedSection(series, index) {
-    if (!series || series.length === 0) return;
+// Función para mostrar notificaciones
+function showNotification(message, type = 'success') {
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 15px 20px;
+        background: ${type === 'success' ? 'rgba(16, 185, 129, 0.9)' : type === 'info' ? 'rgba(59, 130, 246, 0.9)' : 'rgba(239, 68, 68, 0.9)'};
+        color: white;
+        border-radius: 10px;
+        z-index: 10000;
+        font-weight: 600;
+        backdrop-filter: blur(10px);
+    `;
+    notification.textContent = message;
+    document.body.appendChild(notification);
     
-    const item = series[index];
-    const title = item.name || item.title;
-    const releaseYear = item.first_air_date ? new Date(item.first_air_date).getFullYear() : 'N/A';
-    const backdropUrl = item.backdrop_path ? `${IMAGE_BASE_URL_ORIGINAL}${item.backdrop_path}` : '';
+    setTimeout(() => {
+        notification.remove();
+    }, 3000);
+}
 
-    document.getElementById('f-year').textContent = releaseYear;
-    document.getElementById('f-title').textContent = title;
-    document.getElementById('f-meta').textContent = 'Top 10 Series';
-    document.getElementById('f-desc').textContent = item.overview || 'Descripción no disponible.';
+// Función para formatear fechas
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('es-ES', { 
+        year: 'numeric', 
+        month: 'short', 
+        day: 'numeric' 
+    });
+}
 
-    const bgImg = index % 2 === 0 ? 'featured-bg-a' : 'featured-bg-b';
-    const otherBg = index % 2 === 0 ? 'featured-bg-b' : 'featured-bg-a';
-    
-    if (backdropUrl) {
-        document.getElementById(bgImg).style.backgroundImage = `url('${backdropUrl}')`;
-        document.getElementById(bgImg).style.opacity = '1';
-        document.getElementById(otherBg).style.opacity = '0';
+// Función para cerrar sesión
+function logout() {
+    if (confirm('¿Estás seguro que quieres cerrar sesión?')) {
+        sessionStorage.clear();
+        window.location.href = '../index.html';
     }
 }
 
-function selectFeatured(index) {
-    currentFeaturedIndex = index;
-    updateFeaturedSection(featuredSeries, index);
-}
-
-// Initialize
-async function initializeApp() {
-    try {
-        const [
-            movies,
-            series,
-            upcoming,
-            topRatedMovies,
-            topSeries
-        ] = await Promise.all([
-            fetchContent(ENDPOINTS.popular),
-            fetchContent(ENDPOINTS.popularTv),
-            fetchContent(ENDPOINTS.upcoming),
-            fetchContent(ENDPOINTS.topRated),
-            fetchContent(ENDPOINTS.topRatedTv)
-        ]);
-
-        // Render películas
-        renderMoviesGrid(movies.slice(0, 12), 'movies-section');
-
-        // Render series
-        renderMoviesGrid(series.slice(0, 12), 'series-section');
-
-        // Render populares (mezcla de ambas)
-        renderMoviesGrid([...movies.slice(0, 6), ...series.slice(0, 6)], 'popular-section');
-
-        // Render últimos lanzamientos
-        renderMoviesGrid(upcoming.slice(0, 12), 'upcoming-section');
-
-        // Hero aleatoria
-        if (topRatedMovies.length > 0) {
-            const randomIndex = Math.floor(Math.random() * topRatedMovies.length);
-            updateHeroSection(topRatedMovies[randomIndex]);
-        }
-
-        // Top 10 series
-        featuredSeries = topSeries.slice(0, 10);
-        renderFeaturedTrack(featuredSeries);
-        if (featuredSeries.length > 0) {
-            updateFeaturedSection(featuredSeries, 0);
-        }
-
-    } catch (error) {
-        console.error('Error initializing app:', error);
-    }
-}
-
-// Rotación automática de Top 10
-function startFeaturedRotation() {
-    setInterval(() => {
-        if (featuredSeries.length > 0) {
-            currentFeaturedIndex = (currentFeaturedIndex + 1) % featuredSeries.length;
-            updateFeaturedSection(featuredSeries, currentFeaturedIndex);
-        }
-    }, 8000);
-}
-
-// Dropdowns
-function initializeDropdowns() {
+// Inicializar dropdowns del admin
+function initializeAdminDropdowns() {
     const genresToggle = document.querySelector('.dropdown-toggle');
     const genresDropdown = document.querySelector('.dropdown');
     const genresMenu = document.querySelector('.dropdown-menu');
@@ -274,27 +699,10 @@ function initializeDropdowns() {
             profileDropdown.classList.remove('active');
         }
     });
-
-    document.addEventListener('click', (e) => {
-        if (e.target.hasAttribute('data-genre')) {
-            e.preventDefault();
-            e.stopPropagation();
-            
-            const genreId = e.target.getAttribute('data-genre');
-            const genreText = e.target.textContent || e.target.innerText;
-            const genreName = genreText.replace(/^[^\w\s]+\s*/, '').trim();
-            
-            selectGenre(genreId, genreName);
-            
-            if (genresDropdown) {
-                genresDropdown.classList.remove('active');
-            }
-        }
-    });
 }
 
-// Hamburger
-function initializeHamburger() {
+// Inicializar hamburger del admin
+function initializeAdminHamburger() {
     const hamburger = document.getElementById('hamburger');
     const navMenu = document.getElementById('nav-menu');
 
@@ -313,60 +721,5 @@ function initializeHamburger() {
     }
 }
 
-// Event listeners
-document.addEventListener('DOMContentLoaded', () => {
-    initializeApp();
-    startFeaturedRotation();
-    initializeDropdowns();
-    initializeHamburger();
-
-    // 🔍 Search
-    const searchToggle = document.getElementById('search-toggle');
-    const searchContainer = document.getElementById('search-container');
-    const searchInput = document.getElementById('search-input');
-
-    if (searchToggle && searchContainer && searchInput) {
-        searchToggle.addEventListener('click', (e) => {
-            e.stopPropagation();
-            searchContainer.classList.toggle('active');
-            if (searchContainer.classList.contains('active')) {
-                searchInput.focus();
-            }
-        });
-
-        document.addEventListener('click', (e) => {
-            if (!searchContainer.contains(e.target) && e.target !== searchToggle) {
-                searchContainer.classList.remove('active');
-            }
-        });
-
-        searchInput.addEventListener('keypress', async (e) => {
-            if (e.key === 'Enter') {
-                const query = searchInput.value.trim();
-                if (query) {
-                    document.querySelectorAll('.row-section, .section').forEach(sec => sec.style.display = 'none');
-                    document.getElementById('featured-section').style.display = 'none';
-
-                    const genreSection = document.getElementById('genre-section');
-                    genreSection.style.display = 'block';
-                    document.getElementById('genre-title').textContent = `RESULTADOS PARA "${query}"`;
-
-                    const container = document.getElementById('genre-movies');
-                    container.innerHTML = `
-                        <div class="loading">
-                            <div class="spinner"></div>
-                            Buscando "${query}"...
-                        </div>
-                    `;
-
-                    const results = await searchMovies(query);
-                    renderMoviesGrid(results.slice(0, 20), 'genre-movies');
-
-                    if (results.length > 0) {
-                        updateHeroSection(results[0]);
-                    }
-                }
-            }
-        });
-    }
-});
+// Event listener principal
+document.addEventListener('DOMContentLoaded', initializeAdminPanel);

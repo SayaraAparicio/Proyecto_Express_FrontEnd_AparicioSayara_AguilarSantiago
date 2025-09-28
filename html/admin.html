@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KarenFlix</title>
+  <title>Panel de Administrador - KarenFlix</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -21,7 +21,7 @@
   <header class="header">
     <img class="logo" src="../storage/logo.png" alt="KarenFlix">
 
-    <!-- Hamburger Menu (Mobile) -->
+    <!-- Hamburger Celphone -->
     <button class="hamburger" id="hamburger">
       <span></span>
       <span></span>
@@ -30,41 +30,28 @@
 
     <nav class="nav" id="nav-menu">
       <a href="#hero-section">Inicio</a>
-      <a href="#pelis">Películas</a>
-      <a href="#series">Series</a>
-      <a href="#featured-section">Top 10</a>
+      <a href="#admin-panel">Panel Admin</a>
+      <a href="#trending">Estadísticas</a>
       <div class="dropdown">
         <a href="#generos" class="dropdown-toggle">
-          <i class="bi bi-collection"></i>
-          Géneros
+          <i class="bi bi-gear"></i>
+          Gestión
           <i class="bi bi-chevron-down dropdown-arrow"></i>
         </a>
         <div class="dropdown-menu">
-          <a href="#" data-genre="28"><i class="bi bi-lightning"></i>Acción</a>
-          <a href="#" data-genre="12"><i class="bi bi-compass"></i>Aventura</a>
-          <a href="#" data-genre="16"><i class="bi bi-palette"></i>Animación</a>
-          <a href="#" data-genre="35"><i class="bi bi-emoji-smile"></i>Comedia</a>
-          <a href="#" data-genre="80"><i class="bi bi-shield-exclamation"></i>Crimen</a>
-          <a href="#" data-genre="99"><i class="bi bi-camera-video"></i>Documental</a>
-          <a href="#" data-genre="18"><i class="bi bi-theater-masks"></i>Drama</a>
-          <a href="#" data-genre="10751"><i class="bi bi-house-heart"></i>Familia</a>
-          <a href="#" data-genre="14"><i class="bi bi-magic"></i>Fantasía</a>
-          <a href="#" data-genre="36"><i class="bi bi-book"></i>Historia</a>
-          <a href="#" data-genre="27"><i class="bi bi-moon"></i>Terror</a>
-          <a href="#" data-genre="10402"><i class="bi bi-music-note"></i>Música</a>
-          <a href="#" data-genre="9648"><i class="bi bi-question-circle"></i>Misterio</a>
-          <a href="#" data-genre="10749"><i class="bi bi-heart"></i>Romance</a>
-          <a href="#" data-genre="878"><i class="bi bi-rocket"></i>Ciencia Ficción</a>
-          <a href="#" data-genre="53"><i class="bi bi-exclamation-triangle"></i>Suspenso</a>
+          <a href="#user" onclick="switchTab('users')"><i class="bi bi-people"></i>Usuarios</a>
+          <a href="#movie" onclick="switchTab('movies')"><i class="bi bi-film"></i>Películas/Series</a>
+          <a href="#review" onclick="switchTab('reviews')"><i class="bi bi-star"></i>Reseñas</a>
+          <a href="#categories" onclick="switchTab('categories')"><i class="bi bi-collection"></i>Categorías</a>
         </div>
       </div>
-      <a href="#trending">Tendencias</a>
+      <a href="./home.html">Vista Usuario</a>
     </nav>
 
     <div class="header-icons">
       <div class="search-icon" id="search-toggle">🔍</div>
       <div class="search-container" id="search-container">
-        <input type="text" id="search-input" placeholder="Buscar películas..." />
+        <input type="text" id="search-input" placeholder="Buscar en administración..." />
       </div>
 
       <div class="profile-dropdown">
@@ -75,12 +62,12 @@
           <a href="#"><i class="bi bi-person-circle"></i>Mi Perfil</a>
           <a href="#"><i class="bi bi-gear"></i>Configuración</a>
           <div class="divider"></div>
-          <a href="#"><i class="bi bi-gear"></i>Gestionar usuarios</a>
-          <a href="#"><i class="bi bi-gear"></i>Gestionar películas</a>
-          <a href="#"><i class="bi bi-gear"></i>Gestionar reseñas</a>
+          <a href="#user" onclick="switchTab('users')"><i class="bi bi-people"></i>Gestionar usuarios</a>
+          <a href="#movie" onclick="switchTab('movies')"><i class="bi bi-film"></i>Gestionar películas</a>
+          <a href="#review" onclick="switchTab('reviews')"><i class="bi bi-star"></i>Gestionar reseñas</a>
           <div class="divider"></div>
           <a href="#"><i class="bi bi-question-circle"></i>Ayuda</a>
-          <a href="../index.html"><i class="bi bi-box-arrow-right"></i>Cerrar Sesión</a>
+          <a href="#" onclick="logout()"><i class="bi bi-box-arrow-right"></i>Cerrar Sesión</a>
         </div>
       </div>
     </div>
@@ -92,90 +79,197 @@
     <section class="hero" id="hero-section">
       <div class="hero-background" id="hero-bg"></div>
       <div class="hero-content">
-        <div class="hero-category" id="hero-category">Película Destacada</div>
-        <h1 class="hero-title" id="hero-title">Cargando películas...</h1>
+        <div class="hero-category" id="hero-category">Panel de Administrador</div>
+        <h1 class="hero-title" id="hero-title">Bienvenido al Panel de Control</h1>
         <div class="hero-meta" id="hero-meta">
           <span id="hero-year">2024</span>
           <span>|</span>
-          <span id="hero-director">Director</span>
+          <span id="hero-director">KarenFlix Admin</span>
           <span>|</span>
-          <span id="hero-seasons">Película</span>
+          <span id="hero-seasons">Gestión Completa</span>
         </div>
         <p class="hero-description" id="hero-description">
-          Conectando con TMDB para obtener las mejores películas...
+          Administra usuarios, contenido, reseñas y categorías desde este panel centralizado. Mantén el control total de tu plataforma.
         </p>
         <div class="hero-rating" id="hero-rating">
-          <span class="star">★</span>
-          <span class="star">★</span>
-          <span class="star">★</span>
-          <span class="star">★</span>
-          <span class="star">★</span>
+          <span class="star">⭐</span>
+          <span class="star">⭐</span>
+          <span class="star">⭐</span>
+          <span class="star">⭐</span>
+          <span class="star">⭐</span>
         </div>
         <div class="hero-buttons">
-          <button class="btn-primary">
-            <a class="watchnow" href="https://www.netflix.com/co/">▶ VER AHORA</a>
+          <button class="btn-primary" onclick="switchTab('users')">
+            <i class="bi bi-speedometer2"></i> IR AL PANEL
           </button>
-          <button class="btn-secondary">RESEÑAS</button>
+          <button class="btn-secondary" onclick="window.location.href='./home.html'">VISTA USUARIO</button>
         </div>
       </div>
-      <div class="age-rating">16+</div>
+      <div class="age-rating">ADMIN</div>
     </section>
 
-    <!-- Últimos lanzamientos -->
-    <section class="section">
-      <h2 class="section-title">ÚLTIMOS LANZAMIENTOS</h2>
-      <div class="movies-grid" id="upcoming-section"></div>
-    </section>
- <!-- Top 10 Series -->
-    <section class="featured-carousel" id="featured-section">
-      <div class="featured-bg">
-        <div class="featured-bg__img is-a" id="featured-bg-a"></div>
-        <div class="featured-bg__img is-b" id="featured-bg-b"></div>
-        <div class="featured-bg__veil"></div>
-      </div>
-      <div class="featured-grid">
-        <div class="featured-info">
-          <p class="f-suptitle">Las 10 Series Más Populares</p>
-          <p class="f-sub">Mira las series más vistas de este mes.</p>
-          <p class="f-year" id="f-year">2024</p>
-          <h2 class="f-title" id="f-title">Cargando...</h2>
-          <p class="f-meta" id="f-meta">Drama • Suspenso</p>
-          <p class="f-desc" id="f-desc">Descripción de la serie destacada...</p>
-          <div class="f-actions">
-            <a class="btn btn-primary" href="#" id="f-play">▶ Ver Trailer</a>
-            <a class="btn btn-ghost" href="#" id="f-review">★ Reseñar</a>
+    <!-- Panel de Administración -->
+    <section class="admin-panel" id="admin-panel">
+      <div class="admin-container">
+        <h1 class="admin-title">Panel de Administrador</h1>
+
+        <!-- Estadísticas -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-number" id="total-users">245</div>
+            <div class="stat-label">Usuarios Registrados</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" id="total-movies">89</div>
+            <div class="stat-label">Películas/Series</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" id="total-reviews">1,234</div>
+            <div class="stat-label">Reseñas Publicadas</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" id="pending-approvals">12</div>
+            <div class="stat-label">Pendientes por Aprobar</div>
           </div>
         </div>
-        <div class="featured-strip row-inner">
-          <button class="row-nav prev" onclick="scrollRow('featured', -1)">❮</button>
-          <div class="row-track" id="featured-track"></div>
-          <button class="row-nav next" onclick="scrollRow('featured', 1)">❯</button>
+
+        <!-- Tabs -->
+        <div class="admin-tabs">
+          <button id="user" class="admin-tab active" onclick="switchTab('users')">
+            <i class="bi bi-people"></i> Usuarios
+          </button>
+          <button id="movie" class="admin-tab" onclick="switchTab('movies')">
+            <i class="bi bi-film"></i> Películas/Series
+          </button>
+          <button id="review" class="admin-tab" onclick="switchTab('reviews')">
+            <i class="bi bi-star"></i> Reseñas
+          </button>
+          <button id="categories" class="admin-tab" onclick="switchTab('categories')">
+            <i class="bi bi-collection"></i> Categorías
+          </button>
+        </div>
+
+        <!-- Users Tab -->
+        <div id="users-tab" class="tab-content active">
+          <div class="admin-actions">
+            <div class="search-bar">
+              <input type="text" placeholder="Buscar usuarios..." id="users-search">
+            </div>
+            <button class="add-btn" onclick="showNotification('Función disponible cuando conectemos el api', 'info')">
+              <i class="bi bi-plus-circle"></i> Nuevo Usuario
+            </button>
+          </div>
+
+          <div class="admin-table table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Usuario</th>
+                  <th>Email</th>
+                  <th>Rol</th>
+                  <th>Estado</th>
+                  <th>Reseñas</th>
+                  <th>Registro</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="users-table-body">
+               <!-- en el js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Movies Tab -->
+        <div id="movies-tab" class="tab-content" style="display: none;">
+          <div class="admin-actions">
+            <div class="search-bar">
+              <input type="text" placeholder="Buscar películas/series..." id="movies-search">
+            </div>
+            <button class="add-btn" onclick="showNotification('Función disponible cuando conectes tu API', 'info')">
+              <i class="bi bi-plus-circle"></i> Nueva Película/Serie
+            </button>
+          </div>
+
+          <div class="admin-table table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Título</th>
+                  <th>Categoría</th>
+                  <th>Año</th>
+                  <th>Estado</th>
+                  <th>Rating</th>
+                  <th>Reseñas</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="movies-table-body">
+                <!-- en el js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Reviews Tab -->
+        <div id="reviews-tab" class="tab-content" style="display: none;">
+          <div class="admin-actions">
+            <div class="search-bar">
+              <input type="text" placeholder="Buscar reseñas..." id="reviews-search">
+            </div>
+            <button class="add-btn" onclick="showNotification('Los usuarios crean las reseñas desde el frontend', 'info')">
+              <i class="bi bi-eye"></i> Ver Todas
+            </button>
+          </div>
+
+          <div class="admin-table table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Reseña</th>
+                  <th>Película/Serie</th>
+                  <th>Rating</th>
+                  <th>Interacciones</th>
+                  <th>Fecha</th>
+                  <th>Estado</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="reviews-table-body">
+                <!-- en el js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Categories Tab -->
+        <div id="categories-tab" class="tab-content" style="display: none;">
+          <div class="admin-actions">
+            <div class="search-bar">
+              <input type="text" placeholder="Buscar categorías..." id="categories-search">
+            </div>
+            <button class="add-btn" onclick="showNotification('Función disponible cuando conectes tu API', 'info')">
+              <i class="bi bi-plus-circle"></i> Nueva Categoría
+            </button>
+          </div>
+
+          <div class="admin-table table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Nombre</th>
+                  <th>Contenido</th>
+                  <th>Estado</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="categories-table-body">
+                <!-- en el js -->
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
-    </section>
-    <!-- Películas -->
-    <section id="pelis" class="section">
-      <h2 class="section-title">PELÍCULAS</h2>
-      <div class="movies-grid" id="movies-section"></div>
-    </section>
-
-    <!-- Series -->
-    <section id="series" class="section">
-      <h2 class="section-title">SERIES</h2>
-      <div class="movies-grid" id="series-section"></div>
-    </section>
-
-    <!-- Populares -->
-    <section id="trending" class="section">
-      <h2 class="section-title">POPULARES</h2>
-      <div class="movies-grid" id="popular-section"></div>
-    </section>
-
-
-    <!-- Resultados de búsqueda -->
-    <section class="section" id="genre-section" style="display: none;">
-      <h2 class="section-title" id="genre-title">RESULTADOS</h2>
-      <div class="movies-grid" id="genre-movies"></div>
     </section>
   </main>
 
