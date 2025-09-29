@@ -1,5 +1,3 @@
-const BASE_URL = "https://proyecto-express-backend-aparicio-s.vercel.app/api/v1";
-
 function renderStars(rating) {
   const maxStars = 5;
   const filled = Math.round(rating);
@@ -303,93 +301,6 @@ async function initializeApp() {
   }
 }
 
-async function displayReviews(idPelicula) {
-  const reviews = await fetchData(`/reviews/${idPelicula}`);
-  const container = document.getElementById("reviews-section");
-  if (!container) return;
-
-  if (!reviews || reviews.length === 0) {
-    container.innerHTML = "<p>No hay reseñas aún</p>";
-    return;
-  }
-
-  container.innerHTML = reviews.map(r => `
-    <div class="review-card">
-      <h4>${r.titulo} - ★ ${r.rating}</h4>
-      <p>${r.comentario}</p>
-      <small>por ${r.idUsuario}</small>
-      <button onclick="toggleReaction('${r._id}', 'like')">👍 ${r.likes?.length || 0}</button>
-      <button onclick="toggleReaction('${r._id}', 'dislike')">👎 ${r.dislikes?.length || 0}</button>
-    </div>
-  `).join("");
-}
-
-async function submitReview(idPelicula, titulo, comentario, rating) {
-  const token = localStorage.getItem("token");
-  if (!token) return alert("Debes iniciar sesión");
-
-  const res = await fetch(`${BASE_URL}/reviews`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${token}`
-    },
-    body: JSON.stringify({ idPelicula: idPelicula, titulo, comentario, rating })
-  });
-
-  if (!res.ok) {
-    alert("Error al enviar reseña");
-    return;
-  }
-  alert("✅ Reseña publicada");
-  displayReviews(idPelicula);
-}
-
-async function toggleReaction(reviewId, tipo) {
-  const token = localStorage.getItem("token");
-  if (!token) return alert("Debes iniciar sesión");
-
-  await fetch(`${BASE_URL}/reactions/${reviewId}/react`, {
-    method: "POST",
-    headers: { "Authorization": `Bearer ${token}` },
-    body: JSON.stringify({ tipo })
-  });
-
-  alert(tipo === "like" ? "👍 Like registrado" : "👎 Dislike registrado");
-}
-
-function openMovie(idPelicula, movieTitle) {
-  const reviewsContainer = document.getElementById("reviews-section");
-  reviewsContainer.innerHTML = `
-    <h2>Reseñas para ${movieTitle}</h2>
-    <form id="reviewForm">
-      <input type="text" id="reviewTitle" placeholder="Título" required>
-      <textarea id="reviewComment" placeholder="Escribe tu reseña..." required></textarea>
-      <label>Calificación: 
-        <select id="reviewRating">
-          <option value="1">★</option>
-          <option value="2">★★</option>
-          <option value="3">★★★</option>
-          <option value="4">★★★★</option>
-          <option value="5">★★★★★</option>
-        </select>
-      </label>
-      <button type="submit">Enviar</button>
-    </form>
-    <div id="reviews-list"></div>
-  `;
-
-  displayReviews(idPelicula);
-
-  document.getElementById("reviewForm").addEventListener("submit", (e) => {
-    e.preventDefault();
-    const titulo = document.getElementById("reviewTitle").value.trim();
-    const comentario = document.getElementById("reviewComment").value.trim();
-    const rating = Number(document.getElementById("reviewRating").value);
-    submitReview(idPelicula, titulo, comentario, rating);
-  });
-}
-
 const TOKEN = () => localStorage.getItem("token");
 
 function isValidObjectId(id) {
@@ -428,17 +339,40 @@ function reviewCard(r) {
   const txt = r.comentario || "";
   const rating = r.rating ?? "N/A";
   const id = r._id;
+  
+  const stars = Array.from({length: 5}, (_, i) => 
+    `<span class="star ${i < rating ? 'active' : ''}">★</span>`
+  ).join('');
 
   return `
-    <div class="review-card" style="background:rgba(255,255,255,0.04);padding:14px;border-radius:10px;margin-bottom:12px;">
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <h4 style="margin:0;font-weight:600">${title} – ★ ${rating}</h4>
-        <small style="opacity:.7">${r.creadaEn ? new Date(r.creadaEn).toLocaleDateString() : ""}</small>
+    <div class="review-card">
+      <div class="review-header">
+        <div class="reviewer-info">
+          <div class="reviewer-avatar">${(r.nombreUsuario || 'U')[0].toUpperCase()}</div>
+          <div class="reviewer-details">
+            <h4>${r.nombreUsuario || 'Usuario Anónimo'}</h4>
+            <div class="review-rating">
+              ${stars}
+              <span class="rating-number">${rating}/5</span>
+            </div>
+            <div class="review-date">${r.creadaEn ? new Date(r.creadaEn).toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' }) : ''}</div>
+          </div>
+        </div>
       </div>
-      <p style="margin:8px 0 12px 0;opacity:.9">${txt}</p>
-      <div style="display:flex;gap:8px;">
-        <button onclick="reactReview('${id}','like','${r.idPelicula}')" style="background:#1f2937;color:#fff;border:0;border-radius:8px;padding:6px 10px;cursor:pointer;">👍 ${likes}</button>
-        <button onclick="reactReview('${id}','dislike','${r.idPelicula}')" style="background:#1f2937;color:#fff;border:0;border-radius:8px;padding:6px 10px;cursor:pointer;">👎 ${dislikes}</button>
+      <div class="review-content">
+        <h3 class="review-title">${title}</h3>
+        <p class="review-text">${txt}</p>
+      </div>
+      <div class="review-actions">
+        <button class="action-btn" onclick="reactReview('${id}','like','${r.idPelicula}')">
+          <i class="bi bi-hand-thumbs-up"></i>
+          <span>${likes}</span>
+        </button>
+        <button class="action-btn" onclick="reactReview('${id}','dislike','${r.idPelicula}')">
+          <i class="bi bi-hand-thumbs-down"></i>
+          <span>${dislikes}</span>
+        </button>
+        <span class="helpful-text">${likes + dislikes} persona(s) reaccionaron</span>
       </div>
     </div>
   `;
@@ -449,19 +383,53 @@ async function displayMovieReviews(idPelicula) {
     const realId = await ensureidPelicula(String(idPelicula));
     const sec = ensureReviewsSection();
     const list = sec.querySelector("#reviews-list");
-    list.innerHTML = `<div style="opacity:.8;padding:8px">Cargando reseñas…</div>`;
+    
+    list.innerHTML = `
+      <div class="loading">
+        <div class="spinner"></div>
+        <span>Cargando reseñas...</span>
+      </div>
+    `;
 
     const res = await fetch(`${BASE_URL}/reviews/${realId}`);
     if (!res.ok) {
-      list.innerHTML = `<div style="opacity:.8;padding:8px">No se pudieron cargar reseñas (HTTP ${res.status}).</div>`;
+      list.innerHTML = `
+        <div class="no-reviews">
+          <i class="bi bi-chat-left-text" style="font-size: 3rem; opacity: 0.5; margin-bottom: 15px;"></i>
+          <p>No se pudieron cargar reseñas (HTTP ${res.status}).</p>
+        </div>
+      `;
       return;
     }
+    
     const reviews = await res.json();
     if (!Array.isArray(reviews) || reviews.length === 0) {
-      list.innerHTML = `<div style="opacity:.8;padding:8px">Aún no hay reseñas. ¡Sé el primero en opinar!</div>`;
+      list.innerHTML = `
+        <div class="no-reviews">
+          <i class="bi bi-chat-left-text" style="font-size: 3rem; opacity: 0.5; margin-bottom: 15px;"></i>
+          <p>Aún no hay reseñas. ¡Sé el primero en opinar!</p>
+        </div>
+      `;
       return;
     }
-    list.innerHTML = reviews.map(reviewCard).join("");
+    
+    const reviewsHeader = `
+      <div class="reviews-header">
+        <div class="reviews-stats">
+          <div class="avg-rating">
+            <span class="rating-number">${(reviews.reduce((acc, r) => acc + (r.rating || 0), 0) / reviews.length).toFixed(1)}</span>
+            <div class="rating-stars">
+              ${Array.from({length: 5}, (_, i) => 
+                `<span class="star ${i < Math.round(reviews.reduce((acc, r) => acc + (r.rating || 0), 0) / reviews.length) ? 'active' : ''}">★</span>`
+              ).join('')}
+            </div>
+            <span class="reviews-count">${reviews.length} reseña(s)</span>
+          </div>
+        </div>
+      </div>
+    `;
+    
+    list.innerHTML = reviewsHeader + reviews.map(reviewCard).join("");
     sec.scrollIntoView({ behavior: "smooth" });
   } catch (e) {
     alert("No se pudieron mostrar las reseñas.");
@@ -471,35 +439,107 @@ async function displayMovieReviews(idPelicula) {
 
 function buildReviewModal() {
   if (document.getElementById("review-modal")) return;
+  
   const html = `
-    <div id="review-modal" style="position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:9999;">
-      <div style="width:min(520px,92vw);background:#0b1220;color:#fff;border-radius:14px;padding:18px 16px;">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-          <h3 style="margin:0;font-weight:700">Escribir reseña</h3>
-          <button onclick="closeReviewModal()" style="background:transparent;color:#fff;border:0;font-size:20px;cursor:pointer;">×</button>
+    <div class="modal-overlay" id="review-modal">
+      <div class="review-modal">
+        <div class="modal-header">
+          <h2>Escribir Reseña</h2>
+          <button class="close-modal" onclick="closeReviewModal()">
+            <i class="bi bi-x-lg"></i>
+          </button>
         </div>
-        <form id="reviewForm">
-          <input id="rv-title" placeholder="Título" required
-                 style="width:100%;margin:6px 0 10px 0;padding:10px;border-radius:8px;border:1px solid #263149;background:#0f172a;color:#fff;"/>
-          <textarea id="rv-text" placeholder="Tu reseña…" rows="4" required
-                    style="width:100%;margin:6px 0 10px 0;padding:10px;border-radius:8px;border:1px solid #263149;background:#0f172a;color:#fff;"></textarea>
-          <label style="display:block;margin:8px 0 12px 0;">Calificación:
-            <select id="rv-rating" style="margin-left:8px;background:#0f172a;border:1px solid #263149;color:#fff;border-radius:6px;padding:6px;">
-              <option value="1">★</option>
-              <option value="2">★★</option>
-              <option value="3">★★★</option>
-              <option value="4">★★★★</option>
-              <option value="5" selected>★★★★★</option>
-            </select>
-          </label>
-          <div style="display:flex;gap:10px;justify-content:flex-end;">
-            <button type="button" onclick="closeReviewModal()" style="background:#1f2937;border:0;color:#fff;padding:8px 12px;border-radius:8px;cursor:pointer;">Cancelar</button>
-            <button type="submit" style="background:#6366f1;border:0;color:#fff;padding:8px 12px;border-radius:8px;cursor:pointer;">Publicar</button>
+        <div class="modal-body">
+          <div class="movie-info-modal" id="modal-movie-info"></div>
+          <div class="rating-section">
+            <h4>Califica esta película</h4>
+            <div class="star-rating" id="star-rating">
+              <span class="star-input" data-rating="1">★</span>
+              <span class="star-input" data-rating="2">★</span>
+              <span class="star-input" data-rating="3">★</span>
+              <span class="star-input" data-rating="4">★</span>
+              <span class="star-input" data-rating="5">★</span>
+            </div>
+            <p class="rating-text" id="rating-text">Selecciona una calificación</p>
           </div>
-        </form>
+          <form id="reviewForm" class="review-form">
+            <div class="form-group">
+              <label for="rv-title">Título de tu reseña</label>
+              <input id="rv-title" type="text" placeholder="Ej: ¡Una obra maestra!" required maxlength="100">
+            </div>
+            <div class="form-group">
+              <label for="rv-text">Tu opinión</label>
+              <textarea id="rv-text" placeholder="Comparte tu experiencia con esta película..." rows="5" required maxlength="500"></textarea>
+              <span class="char-counter"><span id="char-count">0</span>/500</span>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-cancel" onclick="closeReviewModal()">Cancelar</button>
+          <button type="submit" form="reviewForm" class="btn-submit">Publicar Reseña</button>
+        </div>
       </div>
-    </div>`;
+    </div>
+  `;
+  
   document.body.insertAdjacentHTML("beforeend", html);
+  
+  const starRating = document.getElementById("star-rating");
+  const stars = starRating.querySelectorAll(".star-input");
+  const ratingText = document.getElementById("rating-text");
+  let selectedRating = 0;
+  
+  const ratingDescriptions = {
+    1: "Muy mala",
+    2: "Mala",
+    3: "Regular",
+    4: "Buena",
+    5: "Excelente"
+  };
+  
+  stars.forEach(star => {
+    star.addEventListener("click", function() {
+      selectedRating = parseInt(this.getAttribute("data-rating"));
+      updateStars(selectedRating);
+      ratingText.textContent = `${selectedRating}/5 - ${ratingDescriptions[selectedRating]}`;
+    });
+    
+    star.addEventListener("mouseenter", function() {
+      const rating = parseInt(this.getAttribute("data-rating"));
+      updateStars(rating);
+    });
+  });
+  
+  starRating.addEventListener("mouseleave", function() {
+    updateStars(selectedRating);
+  });
+  
+  function updateStars(rating) {
+    stars.forEach((star, index) => {
+      if (index < rating) {
+        star.classList.add("active");
+      } else {
+        star.classList.remove("active");
+      }
+    });
+  }
+  
+  const textarea = document.getElementById("rv-text");
+  const charCount = document.getElementById("char-count");
+  
+  textarea.addEventListener("input", function() {
+    charCount.textContent = this.value.length;
+  });
+  
+  const form = document.getElementById("reviewForm");
+  form.addEventListener("submit", async function(e) {
+    e.preventDefault();
+    if (selectedRating === 0) {
+      alert("Por favor selecciona una calificación");
+      return;
+    }
+    await submitReview(selectedRating);
+  });
 }
 
 let __currentMovieForReview = { id: null, title: null, poster: null };
@@ -510,14 +550,18 @@ async function openReviewModal(idPelicula, movieTitle = "Película", posterUrl =
     __currentMovieForReview = { id: realId, title: movieTitle, poster: posterUrl };
 
     buildReviewModal();
+    
+    const movieInfo = document.getElementById("modal-movie-info");
+    movieInfo.innerHTML = `
+      <img src="${posterUrl || 'https://placehold.co/80x120?text=Poster'}" alt="${movieTitle}" class="movie-poster-modal">
+      <div class="movie-details-modal">
+        <h3>${movieTitle}</h3>
+        <p>Comparte tu opinión sobre esta película</p>
+      </div>
+    `;
+    
     const modal = document.getElementById("review-modal");
     modal.style.display = "flex";
-
-    const form = document.getElementById("reviewForm");
-    form.onsubmit = async (e) => {
-      e.preventDefault();
-      await submitReview();
-    };
   } catch (e) {
     console.error(e);
   }
@@ -528,15 +572,15 @@ function closeReviewModal() {
   if (modal) modal.style.display = "none";
 }
 
-async function submitReview() {
+async function submitReview(rating) {
   if (!TOKEN()) {
     alert("Debes iniciar sesión para reseñar.");
     return;
   }
+  
   const { id: idPelicula } = __currentMovieForReview;
   const titulo = document.getElementById("rv-title").value.trim();
   const comentario = document.getElementById("rv-text").value.trim();
-  const rating = Number(document.getElementById("rv-rating").value);
 
   if (!titulo || !comentario || !rating) {
     alert("Completa título, reseña y calificación.");
@@ -560,7 +604,7 @@ async function submitReview() {
     }
 
     closeReviewModal();
-    alert("✅ Reseña publicada");
+    showNotification("✅ Reseña publicada exitosamente", "success");
     displayMovieReviews(idPelicula);
   } catch (e) {
     alert("Error de conexión al publicar la reseña.");
@@ -573,6 +617,7 @@ async function reactReview(reviewId, tipo, idPelicula) {
     alert("Debes iniciar sesión.");
     return;
   }
+  
   try {
     const res = await fetch(`${BASE_URL}/reactions/${reviewId}/react`, {
       method: "POST",
@@ -582,16 +627,48 @@ async function reactReview(reviewId, tipo, idPelicula) {
       },
       body: JSON.stringify({ tipo })
     });
+    
     if (!res.ok) {
       const t = await res.json().catch(() => ({}));
       alert(t.msg || "No se pudo registrar la reacción.");
       return;
     }
+    
+    showNotification(tipo === "like" ? "👍 Me gusta registrado" : "👎 No me gusta registrado", "success");
+    
     if (idPelicula) displayMovieReviews(idPelicula);
   } catch (e) {
     alert("Error de red al enviar reacción.");
     console.error(e);
   }
+}
+
+function showNotification(message, type = "success") {
+  const notification = document.createElement("div");
+  notification.className = `notification ${type}`;
+  notification.textContent = message;
+  notification.style.cssText = `
+    position: fixed;
+    top: 90px;
+    right: 20px;
+    padding: 15px 25px;
+    background: ${type === "success" ? "linear-gradient(135deg, #10B981, #059669)" : "linear-gradient(135deg, #EF4444, #DC2626)"};
+    color: white;
+    border-radius: 10px;
+    z-index: 10001;
+    animation: slideIn 0.3s ease;
+  `;
+  
+  document.body.appendChild(notification);
+  
+  setTimeout(() => {
+    notification.style.animation = "slideOut 0.3s ease";
+    setTimeout(() => notification.remove(), 300);
+  }, 3000);
+}
+
+function openMovie(idPelicula, movieTitle) {
+  displayMovieReviews(idPelicula);
 }
 
 function searchGenre(genreName) {

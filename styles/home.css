@@ -1676,3 +1676,454 @@ body {
     opacity: 0.7;
     font-size: 0.9rem;
 }
+
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(100px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideOut {
+    from {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(100px);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.review-actions .action-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 20px;
+    padding: 8px 16px;
+    color: rgba(255, 255, 255, 0.8);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+}
+
+.review-actions .action-btn i {
+    font-size: 1.1rem;
+    transition: transform 0.3s ease;
+}
+
+.review-actions .action-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.2);
+}
+
+.review-actions .action-btn:hover i {
+    transform: scale(1.2);
+}
+
+.review-actions .action-btn:active {
+    transform: translateY(0);
+}
+
+/* Estilos para botones activos (cuando el usuario ya reaccionó) */
+.review-actions .action-btn.liked {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.3), rgba(5, 150, 105, 0.3));
+    color: #10B981;
+    border-color: rgba(16, 185, 129, 0.5);
+}
+
+.review-actions .action-btn.liked:hover {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.4), rgba(5, 150, 105, 0.4));
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.review-actions .action-btn.disliked {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.3), rgba(220, 38, 38, 0.3));
+    color: #EF4444;
+    border-color: rgba(239, 68, 68, 0.5);
+}
+
+.review-actions .action-btn.disliked:hover {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.4), rgba(220, 38, 38, 0.4));
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+/* Mejoras para las tarjetas de reseñas */
+.review-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 15px;
+    padding: 25px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+    animation: fadeIn 0.5s ease;
+}
+
+.review-card:hover {
+    background: rgba(255, 255, 255, 0.08);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(139, 92, 246, 0.15);
+    border-color: rgba(139, 92, 246, 0.3);
+}
+
+/* Contenedor de reseñas */
+.reviews-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-top: 30px;
+}
+
+/* Sección de estadísticas de reseñas */
+.reviews-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.reviews-stats {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.avg-rating {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 15px 25px;
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+}
+
+.rating-number {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #ffd700;
+    font-family: 'Inter', sans-serif;
+}
+
+.rating-stars {
+    display: flex;
+    gap: 3px;
+}
+
+.rating-stars .star {
+    color: rgba(255, 255, 255, 0.3);
+    font-size: 1.2rem;
+}
+
+.rating-stars .star.active {
+    color: #ffd700;
+}
+
+.reviews-count {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+/* Mensaje de sin reseñas */
+.no-reviews {
+    text-align: center;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 1.1rem;
+    padding: 60px 40px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 15px;
+    font-family: 'Inter', sans-serif;
+    border: 2px dashed rgba(255, 255, 255, 0.1);
+}
+
+.no-reviews i {
+    display: block;
+    margin-bottom: 20px;
+}
+
+/* Mejoras para el modal de reseñas */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 10000;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(8px);
+    animation: fadeIn 0.3s ease;
+}
+
+.review-modal {
+    background: linear-gradient(135deg, rgba(10, 10, 35, 0.98), rgba(26, 26, 74, 0.98));
+    border-radius: 20px;
+    max-width: 650px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5), 0 0 100px rgba(139, 92, 246, 0.2);
+    animation: fadeIn 0.3s ease;
+}
+
+/* Estrellas de calificación en el modal */
+.star-rating {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 15px;
+}
+
+.star-input {
+    font-size: 2.5rem;
+    color: rgba(255, 255, 255, 0.2);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+}
+
+.star-input:hover,
+.star-input.active {
+    color: #ffd700;
+    transform: scale(1.15);
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+}
+
+.rating-text {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 1rem;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    text-align: center;
+}
+
+/* Información del revisor */
+.reviewer-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #8B5CF6, #A855F7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: white;
+    font-size: 1.3rem;
+    font-family: 'Inter', sans-serif;
+    box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+}
+
+.reviewer-details h4 {
+    color: white;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    font-family: 'Inter', sans-serif;
+}
+
+.review-rating {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 5px;
+}
+
+.review-rating .star {
+    color: rgba(255, 255, 255, 0.3);
+    font-size: 1rem;
+}
+
+.review-rating .star.active {
+    color: #ffd700;
+}
+
+.review-rating .rating-number {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+.review-date {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.85rem;
+}
+
+/* Contenido de la reseña */
+.review-title {
+    color: white;
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 12px;
+    font-family: 'Inter', sans-serif;
+}
+
+.review-text {
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.7;
+    font-size: 1rem;
+    font-family: 'Inter', sans-serif;
+}
+
+/* Contador de caracteres */
+.char-counter {
+    position: absolute;
+    bottom: 10px;
+    right: 15px;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+/* Texto de utilidad */
+.helpful-text {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.85rem;
+    margin-left: auto;
+    font-style: italic;
+}
+
+/* Loading spinner mejorado */
+.loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 60px 20px;
+    font-size: 1.1rem;
+    font-family: 'Inter', sans-serif;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.spinner {
+    width: 45px;
+    height: 45px;
+    border: 4px solid rgba(139, 92, 246, 0.2);
+    border-left: 4px solid #8B5CF6;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-right: 15px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Notificación mejorada */
+.notification {
+    position: fixed;
+    top: 90px;
+    right: 20px;
+    padding: 15px 25px;
+    border-radius: 12px;
+    z-index: 10001;
+    font-weight: 600;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    animation: slideIn 0.3s ease;
+    font-family: 'Inter', sans-serif;
+}
+
+/* Responsive para reseñas */
+@media (max-width: 768px) {
+    .review-card {
+        padding: 20px;
+    }
+    
+    .reviews-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+    
+    .avg-rating {
+        padding: 12px 18px;
+        gap: 12px;
+    }
+    
+    .rating-number {
+        font-size: 1.5rem;
+    }
+    
+    .reviewer-avatar {
+        width: 45px;
+        height: 45px;
+        font-size: 1.1rem;
+    }
+    
+    .review-actions {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    
+    .helpful-text {
+        margin-left: 0;
+        margin-top: 8px;
+        width: 100%;
+        text-align: center;
+    }
+    
+    .star-input {
+        font-size: 2rem;
+    }
+    
+    .notification {
+        right: 10px;
+        left: 10px;
+        top: 80px;
+    }
+}
+
+@media (max-width: 480px) {
+    .review-modal {
+        width: 95%;
+        margin: 10px;
+    }
+    
+    .modal-body {
+        padding: 20px;
+    }
+    
+    .review-title {
+        font-size: 1.1rem;
+    }
+    
+    .review-text {
+        font-size: 0.95rem;
+    }
+    
+    .action-btn {
+        padding: 6px 12px;
+        font-size: 0.85rem;
+    }
+}
