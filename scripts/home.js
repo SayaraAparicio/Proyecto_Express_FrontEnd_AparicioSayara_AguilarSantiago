@@ -38,7 +38,6 @@ function createMovieCard(movie) {
     </div>
   </article>
 `;
-
 }
 
 // Renderizar grillas
@@ -70,29 +69,87 @@ async function fetchData(endpoint) {
 
 // 📂 Cargar categorías en el dropdown
 async function loadCategories() {
-  const categories = await fetchData("/genres");
   const dropdownMenu = document.querySelector(".dropdown-menu");
   if (!dropdownMenu) return;
 
-  dropdownMenu.innerHTML = categories
-    .map(
-      (cat) =>
-        `<a href="#" data-category="${cat._id}">
-          <i class="bi bi-collection"></i> ${cat.nombre}
-        </a>`
-    )
-    .join("");
+  // Géneros estáticos como fallback
+  const staticGenres = [
+    { id: "28", name: "Acción", icon: "bi-lightning" },
+    { id: "12", name: "Aventura", icon: "bi-compass" },
+    { id: "16", name: "Animación", icon: "bi-palette" },
+    { id: "35", name: "Comedia", icon: "bi-emoji-laughing" },
+    { id: "80", name: "Crimen", icon: "bi-shield-exclamation" },
+    { id: "99", name: "Documental", icon: "bi-camera-video" },
+    { id: "18", name: "Drama", icon: "bi-emoji-tear" },
+    { id: "10751", name: "Familia", icon: "bi-house-heart" },
+    { id: "14", name: "Fantasía", icon: "bi-magic" },
+    { id: "36", name: "Historia", icon: "bi-book" },
+    { id: "27", name: "Terror", icon: "bi-moon" },
+    { id: "10402", name: "Música", icon: "bi-music-note" },
+    { id: "9648", name: "Misterio", icon: "bi-question-circle" },
+    { id: "10749", name: "Romance", icon: "bi-heart" },
+    { id: "878", name: "Ciencia Ficción", icon: "bi-rocket" },
+    { id: "53", name: "Suspenso", icon: "bi-exclamation-triangle" }
+  ];
+
+  try {
+    // Intentar cargar de la API primero
+    const categories = await fetchData("/genres");
+    
+    if (categories && categories.length > 0) {
+      // Si hay datos de la API, usarlos
+      dropdownMenu.innerHTML = categories
+        .map(
+          (cat) =>
+            `<a href="#" data-category="${cat._id}">
+              <i class="bi bi-collection"></i> ${cat.nombre}
+            </a>`
+        )
+        .join("");
+    } else {
+      // Si no hay datos, usar géneros estáticos
+      dropdownMenu.innerHTML = staticGenres
+        .map(
+          (genre) =>
+            `<a href="#" data-category="${genre.id}">
+              <i class="${genre.icon}"></i> ${genre.name}
+            </a>`
+        )
+        .join("");
+    }
+  } catch (error) {
+    // En caso de error, usar géneros estáticos
+    console.log("Usando géneros estáticos como fallback");
+    dropdownMenu.innerHTML = staticGenres
+      .map(
+        (genre) =>
+          `<a href="#" data-category="${genre.id}">
+            <i class="${genre.icon}"></i> ${genre.name}
+          </a>`
+      )
+      .join("");
+  }
 
   // Click en categoría
   dropdownMenu.querySelectorAll("a").forEach((link) => {
     link.addEventListener("click", async (e) => {
       e.preventDefault();
       const categoryId = link.getAttribute("data-category");
-      const movies = await fetchData(`/movies?categoria=${categoryId}`);
-      renderMoviesGrid(movies, "genre-movies");
+      const genreName = link.textContent.trim();
+      
+      // Mostrar mensaje de carga
       document.getElementById("genre-section").style.display = "block";
-      document.getElementById("genre-title").textContent =
-        `Resultados en "${link.textContent.trim()}"`;
+      document.getElementById("genre-title").textContent = `Buscando ${genreName}...`;
+      document.getElementById("genre-movies").innerHTML = '<p style="color: rgba(255,255,255,0.7); text-align:center; padding:20px;">Cargando...</p>';
+      
+      try {
+        const movies = await fetchData(`/movies?categoria=${categoryId}`);
+        renderMoviesGrid(movies, "genre-movies");
+        document.getElementById("genre-title").textContent = `Resultados en "${genreName}"`;
+      } catch (error) {
+        document.getElementById("genre-movies").innerHTML = '<p style="color: rgba(255,255,255,0.7); text-align:center; padding:20px;">No se pudieron cargar las películas de este género</p>';
+        document.getElementById("genre-title").textContent = `Error al cargar ${genreName}`;
+      }
     });
   });
 }
@@ -100,8 +157,28 @@ async function loadCategories() {
 // 🔍 Buscador
 function setupSearch() {
   const searchInput = document.getElementById("search-input");
-  if (!searchInput) return;
+  const searchToggle = document.getElementById("search-toggle");
+  const searchContainer = document.getElementById("search-container");
+  
+  if (!searchInput || !searchToggle || !searchContainer) return;
 
+  // Toggle del buscador
+  searchToggle.addEventListener("click", (e) => {
+    e.stopPropagation();
+    searchContainer.classList.toggle("active");
+    if (searchContainer.classList.contains("active")) {
+      searchInput.focus();
+    }
+  });
+
+  // Cerrar buscador al hacer click fuera
+  document.addEventListener("click", (e) => {
+    if (!searchContainer.contains(e.target) && !searchToggle.contains(e.target)) {
+      searchContainer.classList.remove("active");
+    }
+  });
+
+  // Buscar al presionar Enter
   searchInput.addEventListener("keypress", async (e) => {
     if (e.key === "Enter") {
       const query = searchInput.value.trim();
@@ -112,7 +189,116 @@ function setupSearch() {
       document.getElementById("genre-section").style.display = "block";
       document.getElementById("genre-title").textContent =
         `Resultados para "${query}"`;
+      
+      // Cerrar buscador después de buscar
+      searchContainer.classList.remove("active");
     }
+  });
+}
+
+// 🍔 Menú hamburguesa
+function setupMobileMenu() {
+  const hamburger = document.getElementById("hamburger");
+  const navMenu = document.getElementById("nav-menu");
+  
+  if (!hamburger || !navMenu) return;
+
+  hamburger.addEventListener("click", (e) => {
+    e.stopPropagation();
+    hamburger.classList.toggle("active");
+    navMenu.classList.toggle("active");
+  });
+
+  // Cerrar menú al hacer click fuera
+  document.addEventListener("click", (e) => {
+    if (!navMenu.contains(e.target) && !hamburger.contains(e.target)) {
+      hamburger.classList.remove("active");
+      navMenu.classList.remove("active");
+    }
+  });
+
+  // Cerrar menú al hacer click en un enlace
+  navMenu.querySelectorAll("a:not(.dropdown-toggle)").forEach(link => {
+    link.addEventListener("click", () => {
+      hamburger.classList.remove("active");
+      navMenu.classList.remove("active");
+    });
+  });
+}
+
+// 📋 Dropdowns
+function setupDropdowns() {
+  const dropdowns = document.querySelectorAll(".dropdown");
+  
+  dropdowns.forEach(dropdown => {
+    const toggle = dropdown.querySelector(".dropdown-toggle");
+    const menu = dropdown.querySelector(".dropdown-menu");
+    
+    if (!toggle || !menu) return;
+
+    // Click en el toggle
+    toggle.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      
+      // Cerrar otros dropdowns
+      dropdowns.forEach(otherDropdown => {
+        if (otherDropdown !== dropdown) {
+          otherDropdown.classList.remove("active");
+        }
+      });
+      
+      // Toggle actual dropdown
+      dropdown.classList.toggle("active");
+    });
+
+    // Hover para desktop
+    if (window.innerWidth > 768) {
+      dropdown.addEventListener("mouseenter", () => {
+        dropdown.classList.add("active");
+      });
+
+      dropdown.addEventListener("mouseleave", () => {
+        dropdown.classList.remove("active");
+      });
+    }
+  });
+
+  // Cerrar dropdowns al hacer click fuera
+  document.addEventListener("click", (e) => {
+    dropdowns.forEach(dropdown => {
+      if (!dropdown.contains(e.target)) {
+        dropdown.classList.remove("active");
+      }
+    });
+  });
+}
+
+// 👤 Dropdown de perfil
+function setupProfileDropdown() {
+  const profileToggle = document.getElementById("profile-toggle");
+  const profileMenu = document.getElementById("profile-menu");
+  const profileDropdown = document.querySelector(".profile-dropdown");
+  
+  if (!profileToggle || !profileMenu || !profileDropdown) return;
+
+  profileToggle.addEventListener("click", (e) => {
+    e.stopPropagation();
+    profileDropdown.classList.toggle("active");
+  });
+
+  // Cerrar al hacer click fuera
+  document.addEventListener("click", (e) => {
+    if (!profileDropdown.contains(e.target)) {
+      profileDropdown.classList.remove("active");
+    }
+  });
+
+  // Cerrar al hacer click en un enlace del menú
+  profileMenu.querySelectorAll("a").forEach(link => {
+    link.addEventListener("click", () => {
+      profileDropdown.classList.remove("active");
+    });
   });
 }
 
@@ -123,7 +309,7 @@ async function initializeApp() {
       fetchData("/movies"),
       fetchData("/movies?tipo=serie"),
       fetchData("/popular"),
-      fetchData("/movies?sort=creadaEn"), // 👈 últimos lanzamientos
+      fetchData("/movies?sort=creadaEn"), // 👈 Últimos lanzamientos
     ]);
 
     renderMoviesGrid(peliculas.slice(0, 12), "movies-section");
@@ -133,10 +319,14 @@ async function initializeApp() {
 
     await loadCategories();
     setupSearch();
+    setupMobileMenu();
+    setupDropdowns();
+    setupProfileDropdown();
   } catch (err) {
     console.error("Error inicializando app:", err);
   }
 }
+
 // Mostrar reseñas
 async function displayReviews(movieId) {
   const reviews = await fetchData(`/reviews/${movieId}`);
@@ -440,7 +630,107 @@ async function reactReview(reviewId, tipo, movieId) {
     console.error(e);
   }
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Forzar funcionamiento simple de dropdowns
+    const genresDropdown = document.querySelector('.dropdown');
+    const genresToggle = document.querySelector('.dropdown-toggle');
+    const genresMenu = document.querySelector('.dropdown-menu');
+    
+    if (genresToggle && genresMenu) {
+        // Limpiar todos los event listeners existentes
+        genresToggle.replaceWith(genresToggle.cloneNode(true));
+        const newToggle = document.querySelector('.dropdown-toggle');
+        
+        // Evento súper simple
+        newToggle.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const dropdown = this.closest('.dropdown');
+            const isActive = dropdown.classList.contains('active');
+            
+            // Cerrar todos los dropdowns
+            document.querySelectorAll('.dropdown').forEach(d => {
+                d.classList.remove('active');
+            });
+            
+            // Abrir el actual si no estaba activo
+            if (!isActive) {
+                dropdown.classList.add('active');
+            }
+            
+            console.log('Dropdown clicked, active:', !isActive);
+        });
+        
+        // Cargar géneros estáticos inmediatamente
+        genresMenu.innerHTML = `
+            <a href="#" onclick="searchGenre('Acción')"><i class="bi bi-lightning"></i> Acción</a>
+            <a href="#" onclick="searchGenre('Aventura')"><i class="bi bi-compass"></i> Aventura</a>
+            <a href="#" onclick="searchGenre('Animación')"><i class="bi bi-palette"></i> Animación</a>
+            <a href="#" onclick="searchGenre('Comedia')"><i class="bi bi-emoji-laughing"></i> Comedia</a>
+            <a href="#" onclick="searchGenre('Crimen')"><i class="bi bi-shield-exclamation"></i> Crimen</a>
+            <a href="#" onclick="searchGenre('Drama')"><i class="bi bi-emoji-tear"></i> Drama</a>
+            <a href="#" onclick="searchGenre('Familia')"><i class="bi bi-house-heart"></i> Familia</a>
+            <a href="#" onclick="searchGenre('Fantasía')"><i class="bi bi-magic"></i> Fantasía</a>
+            <a href="#" onclick="searchGenre('Terror')"><i class="bi bi-moon"></i> Terror</a>
+            <a href="#" onclick="searchGenre('Romance')"><i class="bi bi-heart"></i> Romance</a>
+        `;
+    }
+    
+    // Profile dropdown simple
+    const profileToggle = document.getElementById('profile-toggle');
+    const profileDropdown = document.querySelector('.profile-dropdown');
+    
+    if (profileToggle && profileDropdown) {
+        profileToggle.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            profileDropdown.classList.toggle('active');
+            console.log('Profile dropdown clicked');
+        });
+    }
+    
+    // Cerrar dropdowns al hacer click fuera
+    document.addEventListener('click', function(e) {
+        document.querySelectorAll('.dropdown, .profile-dropdown').forEach(dropdown => {
+            if (!dropdown.contains(e.target)) {
+                dropdown.classList.remove('active');
+            }
+        });
+    });
+});
+
+// Función simple para buscar por género
+function searchGenre(genreName) {
+    console.log('Searching genre:', genreName);
+    
+    // Mostrar sección de resultados
+    const genreSection = document.getElementById("genre-section");
+    const genreTitle = document.getElementById("genre-title");
+    const genreMovies = document.getElementById("genre-movies");
+    
+    if (genreSection && genreTitle && genreMovies) {
+        genreSection.style.display = "block";
+        genreTitle.textContent = `Género: ${genreName}`;
+        genreMovies.innerHTML = `
+            <p style="color: rgba(255,255,255,0.7); text-align:center; padding:20px;">
+                Mostrando películas de ${genreName}... <br>
+                (Conecta tu API para ver contenido real)
+            </p>
+        `;
+    }
+    
+    // Cerrar dropdown
+    document.querySelectorAll('.dropdown').forEach(d => {
+        d.classList.remove('active');
+    });
+    
+    // Scroll hacia los resultados
+    if (genreSection) {
+        genreSection.scrollIntoView({ behavior: 'smooth' });
+    }
+}
   
 // Lanzar
 document.addEventListener("DOMContentLoaded", initializeApp);
-

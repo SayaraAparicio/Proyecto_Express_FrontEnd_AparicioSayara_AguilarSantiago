@@ -110,7 +110,7 @@ body {
     width: 100%;
 }
 
-/* Dropdown Styles - Mejorado */
+
 .dropdown {
     position: relative;
     display: inline-block;
@@ -144,6 +144,7 @@ body {
     transform: rotate(180deg);
 }
 
+
 .dropdown-menu {
     position: absolute;
     top: 100%;
@@ -152,6 +153,7 @@ body {
     backdrop-filter: blur(15px);
     border-radius: 12px;
     min-width: 220px;
+    max-width: 280px; /* Limitar ancho máximo */
     padding: 15px 0;
     margin-top: 10px;
     opacity: 0;
@@ -161,9 +163,30 @@ body {
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6), 0 5px 15px rgba(0, 0, 0, 0.4);
     border: 1px solid rgba(255, 255, 255, 0.1);
     z-index: 1001;
-    max-height: 400px;
+    max-height: 400px; /* Altura máxima fija */
     overflow-y: auto;
     pointer-events: none;
+    
+    /* Personalización del scrollbar */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(139, 92, 246, 0.5) transparent;
+}
+
+.dropdown-menu::-webkit-scrollbar {
+    width: 6px;
+}
+
+.dropdown-menu::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.dropdown-menu::-webkit-scrollbar-thumb {
+    background: rgba(139, 92, 246, 0.5);
+    border-radius: 3px;
+}
+
+.dropdown-menu::-webkit-scrollbar-thumb:hover {
+    background: rgba(139, 92, 246, 0.7);
 }
 
 .dropdown.active .dropdown-menu,
@@ -178,13 +201,14 @@ body {
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 12px 20px;
+    padding: 10px 20px; /* Reducir padding para compactar */
     color: rgba(255, 255, 255, 0.9);
     text-decoration: none;
     transition: all 0.3s ease;
-    font-size: 0.95rem;
+    font-size: 0.9rem; /* Hacer texto un poco más pequeño */
     font-weight: 500;
     position: relative;
+    white-space: nowrap; /* Evitar que el texto se corte */
 }
 
 .dropdown-menu a:hover {
@@ -197,7 +221,9 @@ body {
     font-size: 1rem;
     width: 16px;
     text-align: center;
+    flex-shrink: 0; 
 }
+
 
 /* Profile Dropdown */
 .profile-dropdown {
@@ -295,6 +321,7 @@ body {
 .search-icon:hover {
     transform: scale(1.1);
 }
+
 /* Search bar */
 .search-container {
     display: none; /* Oculto por defecto */
@@ -327,7 +354,6 @@ body {
 .search-container.active {
     display: block;
 }
-
 
 /* Main Content */
 .main-content {
@@ -417,6 +443,7 @@ body {
     text-decoration: none;
     color: white;
 }
+
 .btn-primary,
 .btn-secondary {
     padding: 15px 30px;
@@ -809,6 +836,13 @@ body {
     }
 }
 
+/* Si el dropdown se abre hacia arriba en pantallas pequeñas */
+@media (max-height: 600px) {
+    .dropdown-menu {
+        max-height: 250px;
+    }
+}
+
 /* Responsive */
 @media (max-width: 1024px) {
     .featured-grid {
@@ -823,6 +857,7 @@ body {
     }
 }
 
+/* Responsive para mobile - ARREGLADO ESPECÍFICAMENTE */
 @media (max-width: 768px) {
     .header {
         padding: 15px 20px;
@@ -870,25 +905,41 @@ body {
         padding: 15px 0;
     }
 
+    /* DROPDOWN MOBILE - COMPLETAMENTE ARREGLADO */
     .dropdown-menu {
-        position: static;
-        opacity: 1;
-        visibility: visible;
-        transform: none;
-        background: rgba(255, 255, 255, 0.05);
-        margin: 10px 0;
-        border-radius: 8px;
+        position: static !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        transform: none !important;
+        background: rgba(255, 255, 255, 0.05) !important;
+        margin: 10px 0 !important;
+        border-radius: 8px !important;
         display: none;
-        pointer-events: auto;
+        pointer-events: auto !important;
+        max-height: 300px !important;
+        min-width: auto !important;
+        width: 100% !important;
+        box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.3) !important;
     }
 
     .dropdown.active .dropdown-menu {
-        display: block;
+        display: block !important;
     }
 
     .dropdown-menu a {
-        padding: 10px 20px;
-        justify-content: flex-start;
+        padding: 12px 20px !important;
+        justify-content: flex-start !important;
+        font-size: 0.95rem !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .dropdown-menu a:last-child {
+        border-bottom: none;
+    }
+
+    .dropdown-menu a:hover {
+        background: rgba(139, 92, 246, 0.2) !important;
+        padding-left: 30px !important;
     }
 
     .row-section, .section {
@@ -933,6 +984,17 @@ body {
     .logo {
         width: 120px;
     }
+
+    /* Profile dropdown mobile fix */
+    .profile-menu {
+        right: 0;
+        left: auto;
+        min-width: 180px;
+    }
+
+    .search-container {
+        right: 20px;
+    }
 }
 
 @media (min-width: 769px) {
@@ -945,8 +1007,7 @@ body {
     }
 }
 
-
-/* 📱 Responsive Hero Section */
+/* Responsive Hero Section */
 @media (max-width: 1024px) {
   .hero {
     height: auto; /* que crezca según contenido */
@@ -1024,7 +1085,8 @@ body {
     padding: 3px 10px;
   }
 }
-/* SISTEMA DE RESEÑAS - Agregar al final de home.css */
+
+
 
 /* Modal de Reseña */
 .modal-overlay {
