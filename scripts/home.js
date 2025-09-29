@@ -328,8 +328,8 @@ async function initializeApp() {
 }
 
 // Mostrar reseñas
-async function displayReviews(movieId) {
-  const reviews = await fetchData(`/reviews/${movieId}`);
+async function displayReviews(idPelicula) {
+  const reviews = await fetchData(`/reviews/${idPelicula}`);
   const container = document.getElementById("reviews-section");
   if (!container) return;
 
@@ -350,7 +350,7 @@ async function displayReviews(movieId) {
 }
 
 // Enviar nueva reseña
-async function submitReview(movieId, titulo, comentario, rating) {
+async function submitReview(idPelicula, titulo, comentario, rating) {
   const token = localStorage.getItem("token");
   if (!token) return alert("Debes iniciar sesión");
 
@@ -360,7 +360,7 @@ async function submitReview(movieId, titulo, comentario, rating) {
       "Content-Type": "application/json",
       "Authorization": `Bearer ${token}`
     },
-    body: JSON.stringify({ idPelicula: movieId, titulo, comentario, rating })
+    body: JSON.stringify({ idPelicula: idPelicula, titulo, comentario, rating })
   });
 
   if (!res.ok) {
@@ -368,7 +368,7 @@ async function submitReview(movieId, titulo, comentario, rating) {
     return;
   }
   alert("✅ Reseña publicada");
-  displayReviews(movieId);
+  displayReviews(idPelicula);
 }
 
 // Like/Dislike
@@ -386,7 +386,7 @@ async function toggleReaction(reviewId, tipo) {
 }
 
 // Abrir película/serie y mostrar reseñas
-function openMovie(movieId, movieTitle) {
+function openMovie(idPelicula, movieTitle) {
   const reviewsContainer = document.getElementById("reviews-section");
   reviewsContainer.innerHTML = `
     <h2>Reseñas para ${movieTitle}</h2>
@@ -408,7 +408,7 @@ function openMovie(movieId, movieTitle) {
   `;
 
   // cargar reseñas existentes
-  displayReviews(movieId);
+  displayReviews(idPelicula);
 
   // enviar reseña
   document.getElementById("reviewForm").addEventListener("submit", (e) => {
@@ -416,7 +416,7 @@ function openMovie(movieId, movieTitle) {
     const titulo = document.getElementById("reviewTitle").value.trim();
     const comentario = document.getElementById("reviewComment").value.trim();
     const rating = Number(document.getElementById("reviewRating").value);
-    submitReview(movieId, titulo, comentario, rating);
+    submitReview(idPelicula, titulo, comentario, rating);
   });
 }
 
@@ -427,8 +427,8 @@ function isValidObjectId(id) {
   return typeof id === "string" && /^[a-f\d]{24}$/i.test(id);
 }
 
-async function ensureMovieId(movieId) {
-  if (isValidObjectId(movieId)) return movieId;
+async function ensureidPelicula(idPelicula) {
+  if (isValidObjectId(idPelicula)) return idPelicula;
   // Fallback: tomo la primera película de /movies
   try {
     const res = await fetch(`${BASE_URL}/movies`);
@@ -477,9 +477,9 @@ function reviewCard(r) {
 }
 
 // =============== VER RESEÑAS (botón del hero) ===============
-async function displayMovieReviews(movieId) {
+async function displayMovieReviews(idPelicula) {
   try {
-    const realId = await ensureMovieId(String(movieId));
+    const realId = await ensureidPelicula(String(idPelicula));
     const sec = ensureReviewsSection();
     const list = sec.querySelector("#reviews-list");
     list.innerHTML = `<div style="opacity:.8;padding:8px">Cargando reseñas…</div>`;
@@ -538,9 +538,9 @@ function buildReviewModal() {
 
 let __currentMovieForReview = { id: null, title: null, poster: null };
 
-async function openReviewModal(movieId, movieTitle = "Película", posterUrl = "") {
+async function openReviewModal(idPelicula, movieTitle = "Película", posterUrl = "") {
   try {
-    const realId = await ensureMovieId(String(movieId));
+    const realId = await ensureidPelicula(String(idPelicula));
     __currentMovieForReview = { id: realId, title: movieTitle, poster: posterUrl };
 
     buildReviewModal();
@@ -567,7 +567,7 @@ async function submitReview() {
     alert("Debes iniciar sesión para reseñar.");
     return;
   }
-  const { id: movieId } = __currentMovieForReview;
+  const { id: idPelicula } = __currentMovieForReview;
   const titulo = document.getElementById("rv-title").value.trim();
   const comentario = document.getElementById("rv-text").value.trim();
   const rating = Number(document.getElementById("rv-rating").value);
@@ -584,7 +584,7 @@ async function submitReview() {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${TOKEN()}`
       },
-      body: JSON.stringify({ idPelicula: movieId, titulo, comentario, rating })
+      body: JSON.stringify({ idPelicula: idPelicula, titulo, comentario, rating })
     });
 
     const data = await res.json().catch(() => ({}));
@@ -596,7 +596,7 @@ async function submitReview() {
     closeReviewModal();
     alert("✅ Reseña publicada");
     // refrescar listado
-    displayMovieReviews(movieId);
+    displayMovieReviews(idPelicula);
   } catch (e) {
     alert("Error de conexión al publicar la reseña.");
     console.error(e);
@@ -604,7 +604,7 @@ async function submitReview() {
 }
 
 // =============== Reacciones (like/dislike) ===============
-async function reactReview(reviewId, tipo, movieId) {
+async function reactReview(reviewId, tipo, idPelicula) {
   if (!TOKEN()) {
     alert("Debes iniciar sesión.");
     return;
@@ -624,7 +624,7 @@ async function reactReview(reviewId, tipo, movieId) {
       return;
     }
     // refrescar reseñas de esa película
-    if (movieId) displayMovieReviews(movieId);
+    if (idPelicula) displayMovieReviews(idPelicula);
   } catch (e) {
     alert("Error de red al enviar reacción.");
     console.error(e);
