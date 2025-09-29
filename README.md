@@ -173,3 +173,11 @@ Asegúrese de que el backend se encuentre en ejecución antes de probar las func
 - **Ranking:** visualización de películas mejor calificadas.  
 
 ---
+
+
+## Figma
+
+**[Ver Figma](https://www.figma.com/design/sq0iGoqZMLV33fnXSMZWHw/EXPRESS_S1_AGUILARSANTIAGO-APARICIOSAYARA?node-id=0-1&t=wYpbZB0ZV2q5WAoM-1)**
+
+
+---
