@@ -1,6 +1,5 @@
 const BASE_URL = "https://proyecto-express-backend-aparicio-s.vercel.app/api/v1";
 
-// ⭐ Renderizar estrellas
 function renderStars(rating) {
   const maxStars = 5;
   const filled = Math.round(rating);
@@ -11,7 +10,6 @@ function renderStars(rating) {
   return `<div class="stars">${html}</div>`;
 }
 
-// Renderizar tarjetas de películas/series
 function createMovieCard(movie) {
   const posterUrl = movie.imagen
     ? movie.imagen
@@ -40,7 +38,6 @@ function createMovieCard(movie) {
 `;
 }
 
-// Renderizar grillas
 function renderMoviesGrid(movies, containerId) {
   const container = document.getElementById(containerId);
   if (!container) return;
@@ -55,7 +52,6 @@ function renderMoviesGrid(movies, containerId) {
   container.innerHTML = html;
 }
 
-// Fetch helper
 async function fetchData(endpoint) {
   try {
     const res = await fetch(`${BASE_URL}${endpoint}`);
@@ -67,12 +63,10 @@ async function fetchData(endpoint) {
   }
 }
 
-// 📂 Cargar categorías en el dropdown
 async function loadCategories() {
   const dropdownMenu = document.querySelector(".dropdown-menu");
   if (!dropdownMenu) return;
 
-  // Géneros estáticos como fallback
   const staticGenres = [
     { id: "28", name: "Acción", icon: "bi-lightning" },
     { id: "12", name: "Aventura", icon: "bi-compass" },
@@ -93,11 +87,9 @@ async function loadCategories() {
   ];
 
   try {
-    // Intentar cargar de la API primero
     const categories = await fetchData("/genres");
     
     if (categories && categories.length > 0) {
-      // Si hay datos de la API, usarlos
       dropdownMenu.innerHTML = categories
         .map(
           (cat) =>
@@ -107,7 +99,6 @@ async function loadCategories() {
         )
         .join("");
     } else {
-      // Si no hay datos, usar géneros estáticos
       dropdownMenu.innerHTML = staticGenres
         .map(
           (genre) =>
@@ -118,8 +109,6 @@ async function loadCategories() {
         .join("");
     }
   } catch (error) {
-    // En caso de error, usar géneros estáticos
-    console.log("Usando géneros estáticos como fallback");
     dropdownMenu.innerHTML = staticGenres
       .map(
         (genre) =>
@@ -130,14 +119,12 @@ async function loadCategories() {
       .join("");
   }
 
-  // Click en categoría
   dropdownMenu.querySelectorAll("a").forEach((link) => {
     link.addEventListener("click", async (e) => {
       e.preventDefault();
       const categoryId = link.getAttribute("data-category");
       const genreName = link.textContent.trim();
       
-      // Mostrar mensaje de carga
       document.getElementById("genre-section").style.display = "block";
       document.getElementById("genre-title").textContent = `Buscando ${genreName}...`;
       document.getElementById("genre-movies").innerHTML = '<p style="color: rgba(255,255,255,0.7); text-align:center; padding:20px;">Cargando...</p>';
@@ -154,7 +141,6 @@ async function loadCategories() {
   });
 }
 
-// 🔍 Buscador
 function setupSearch() {
   const searchInput = document.getElementById("search-input");
   const searchToggle = document.getElementById("search-toggle");
@@ -162,7 +148,6 @@ function setupSearch() {
   
   if (!searchInput || !searchToggle || !searchContainer) return;
 
-  // Toggle del buscador
   searchToggle.addEventListener("click", (e) => {
     e.stopPropagation();
     searchContainer.classList.toggle("active");
@@ -171,14 +156,12 @@ function setupSearch() {
     }
   });
 
-  // Cerrar buscador al hacer click fuera
   document.addEventListener("click", (e) => {
     if (!searchContainer.contains(e.target) && !searchToggle.contains(e.target)) {
       searchContainer.classList.remove("active");
     }
   });
 
-  // Buscar al presionar Enter
   searchInput.addEventListener("keypress", async (e) => {
     if (e.key === "Enter") {
       const query = searchInput.value.trim();
@@ -190,13 +173,11 @@ function setupSearch() {
       document.getElementById("genre-title").textContent =
         `Resultados para "${query}"`;
       
-      // Cerrar buscador después de buscar
       searchContainer.classList.remove("active");
     }
   });
 }
 
-// 🍔 Menú hamburguesa
 function setupMobileMenu() {
   const hamburger = document.getElementById("hamburger");
   const navMenu = document.getElementById("nav-menu");
@@ -209,7 +190,6 @@ function setupMobileMenu() {
     navMenu.classList.toggle("active");
   });
 
-  // Cerrar menú al hacer click fuera
   document.addEventListener("click", (e) => {
     if (!navMenu.contains(e.target) && !hamburger.contains(e.target)) {
       hamburger.classList.remove("active");
@@ -217,7 +197,6 @@ function setupMobileMenu() {
     }
   });
 
-  // Cerrar menú al hacer click en un enlace
   navMenu.querySelectorAll("a:not(.dropdown-toggle)").forEach(link => {
     link.addEventListener("click", () => {
       hamburger.classList.remove("active");
@@ -226,7 +205,6 @@ function setupMobileMenu() {
   });
 }
 
-// 📋 Dropdowns
 function setupDropdowns() {
   const dropdowns = document.querySelectorAll(".dropdown");
   
@@ -236,23 +214,19 @@ function setupDropdowns() {
     
     if (!toggle || !menu) return;
 
-    // Click en el toggle
     toggle.addEventListener("click", (e) => {
       e.preventDefault();
       e.stopPropagation();
       
-      // Cerrar otros dropdowns
       dropdowns.forEach(otherDropdown => {
         if (otherDropdown !== dropdown) {
           otherDropdown.classList.remove("active");
         }
       });
       
-      // Toggle actual dropdown
       dropdown.classList.toggle("active");
     });
 
-    // Hover para desktop
     if (window.innerWidth > 768) {
       dropdown.addEventListener("mouseenter", () => {
         dropdown.classList.add("active");
@@ -264,7 +238,6 @@ function setupDropdowns() {
     }
   });
 
-  // Cerrar dropdowns al hacer click fuera
   document.addEventListener("click", (e) => {
     dropdowns.forEach(dropdown => {
       if (!dropdown.contains(e.target)) {
@@ -274,42 +247,45 @@ function setupDropdowns() {
   });
 }
 
-// 👤 Dropdown de perfil
 function setupProfileDropdown() {
   const profileToggle = document.getElementById("profile-toggle");
-  const profileMenu = document.getElementById("profile-menu");
   const profileDropdown = document.querySelector(".profile-dropdown");
   
-  if (!profileToggle || !profileMenu || !profileDropdown) return;
+  if (!profileToggle || !profileDropdown) {
+    return;
+  }
 
-  profileToggle.addEventListener("click", (e) => {
+  const newToggle = profileToggle.cloneNode(true);
+  profileToggle.parentNode.replaceChild(newToggle, profileToggle);
+  
+  newToggle.addEventListener("click", function(e) {
+    e.preventDefault();
     e.stopPropagation();
+    
+    document.querySelectorAll('.dropdown').forEach(dropdown => {
+      dropdown.classList.remove('active');
+    });
+    
     profileDropdown.classList.toggle("active");
   });
 
-  // Cerrar al hacer click fuera
-  document.addEventListener("click", (e) => {
-    if (!profileDropdown.contains(e.target)) {
-      profileDropdown.classList.remove("active");
-    }
-  });
-
-  // Cerrar al hacer click en un enlace del menú
-  profileMenu.querySelectorAll("a").forEach(link => {
-    link.addEventListener("click", () => {
-      profileDropdown.classList.remove("active");
+  const profileMenu = profileDropdown.querySelector(".profile-menu");
+  if (profileMenu) {
+    profileMenu.querySelectorAll("a").forEach(link => {
+      link.addEventListener("click", function(e) {
+        profileDropdown.classList.remove("active");
+      });
     });
-  });
+  }
 }
 
-// Inicializar home
 async function initializeApp() {
   try {
     const [peliculas, series, populares, ultimos] = await Promise.all([
       fetchData("/movies"),
       fetchData("/movies?tipo=serie"),
       fetchData("/popular"),
-      fetchData("/movies?sort=creadaEn"), // 👈 Últimos lanzamientos
+      fetchData("/movies?sort=creadaEn"),
     ]);
 
     renderMoviesGrid(peliculas.slice(0, 12), "movies-section");
@@ -327,7 +303,6 @@ async function initializeApp() {
   }
 }
 
-// Mostrar reseñas
 async function displayReviews(idPelicula) {
   const reviews = await fetchData(`/reviews/${idPelicula}`);
   const container = document.getElementById("reviews-section");
@@ -349,7 +324,6 @@ async function displayReviews(idPelicula) {
   `).join("");
 }
 
-// Enviar nueva reseña
 async function submitReview(idPelicula, titulo, comentario, rating) {
   const token = localStorage.getItem("token");
   if (!token) return alert("Debes iniciar sesión");
@@ -371,7 +345,6 @@ async function submitReview(idPelicula, titulo, comentario, rating) {
   displayReviews(idPelicula);
 }
 
-// Like/Dislike
 async function toggleReaction(reviewId, tipo) {
   const token = localStorage.getItem("token");
   if (!token) return alert("Debes iniciar sesión");
@@ -385,7 +358,6 @@ async function toggleReaction(reviewId, tipo) {
   alert(tipo === "like" ? "👍 Like registrado" : "👎 Dislike registrado");
 }
 
-// Abrir película/serie y mostrar reseñas
 function openMovie(idPelicula, movieTitle) {
   const reviewsContainer = document.getElementById("reviews-section");
   reviewsContainer.innerHTML = `
@@ -407,10 +379,8 @@ function openMovie(idPelicula, movieTitle) {
     <div id="reviews-list"></div>
   `;
 
-  // cargar reseñas existentes
   displayReviews(idPelicula);
 
-  // enviar reseña
   document.getElementById("reviewForm").addEventListener("submit", (e) => {
     e.preventDefault();
     const titulo = document.getElementById("reviewTitle").value.trim();
@@ -420,7 +390,6 @@ function openMovie(idPelicula, movieTitle) {
   });
 }
 
-// =============== RESEÑAS: utilidades mínimas ===============
 const TOKEN = () => localStorage.getItem("token");
 
 function isValidObjectId(id) {
@@ -429,7 +398,6 @@ function isValidObjectId(id) {
 
 async function ensureidPelicula(idPelicula) {
   if (isValidObjectId(idPelicula)) return idPelicula;
-  // Fallback: tomo la primera película de /movies
   try {
     const res = await fetch(`${BASE_URL}/movies`);
     const arr = await res.json();
@@ -464,7 +432,7 @@ function reviewCard(r) {
   return `
     <div class="review-card" style="background:rgba(255,255,255,0.04);padding:14px;border-radius:10px;margin-bottom:12px;">
       <div style="display:flex;justify-content:space-between;align-items:center">
-        <h4 style="margin:0;font-weight:600">${title} — ★ ${rating}</h4>
+        <h4 style="margin:0;font-weight:600">${title} – ★ ${rating}</h4>
         <small style="opacity:.7">${r.creadaEn ? new Date(r.creadaEn).toLocaleDateString() : ""}</small>
       </div>
       <p style="margin:8px 0 12px 0;opacity:.9">${txt}</p>
@@ -476,7 +444,6 @@ function reviewCard(r) {
   `;
 }
 
-// =============== VER RESEÑAS (botón del hero) ===============
 async function displayMovieReviews(idPelicula) {
   try {
     const realId = await ensureidPelicula(String(idPelicula));
@@ -502,7 +469,6 @@ async function displayMovieReviews(idPelicula) {
   }
 }
 
-// =============== ESCRIBIR RESEÑA (botón del hero) ===============
 function buildReviewModal() {
   if (document.getElementById("review-modal")) return;
   const html = `
@@ -595,7 +561,6 @@ async function submitReview() {
 
     closeReviewModal();
     alert("✅ Reseña publicada");
-    // refrescar listado
     displayMovieReviews(idPelicula);
   } catch (e) {
     alert("Error de conexión al publicar la reseña.");
@@ -603,7 +568,6 @@ async function submitReview() {
   }
 }
 
-// =============== Reacciones (like/dislike) ===============
 async function reactReview(reviewId, tipo, idPelicula) {
   if (!TOKEN()) {
     alert("Debes iniciar sesión.");
@@ -623,7 +587,6 @@ async function reactReview(reviewId, tipo, idPelicula) {
       alert(t.msg || "No se pudo registrar la reacción.");
       return;
     }
-    // refrescar reseñas de esa película
     if (idPelicula) displayMovieReviews(idPelicula);
   } catch (e) {
     alert("Error de red al enviar reacción.");
@@ -631,106 +594,86 @@ async function reactReview(reviewId, tipo, idPelicula) {
   }
 }
 
+function searchGenre(genreName) {
+  const genreSection = document.getElementById("genre-section");
+  const genreTitle = document.getElementById("genre-title");
+  const genreMovies = document.getElementById("genre-movies");
+  
+  if (genreSection && genreTitle && genreMovies) {
+    genreSection.style.display = "block";
+    genreTitle.textContent = `Género: ${genreName}`;
+    genreMovies.innerHTML = `
+      <p style="color: rgba(255,255,255,0.7); text-align:center; padding:20px;">
+        Mostrando películas de ${genreName}...<br>
+        (Conecta tu API para ver contenido real)
+      </p>
+    `;
+  }
+  
+  document.querySelectorAll('.dropdown, .profile-dropdown').forEach(d => {
+    d.classList.remove('active');
+  });
+  
+  if (genreSection) {
+    genreSection.scrollIntoView({ behavior: 'smooth' });
+  }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
-    // Forzar funcionamiento simple de dropdowns
-    const genresDropdown = document.querySelector('.dropdown');
-    const genresToggle = document.querySelector('.dropdown-toggle');
-    const genresMenu = document.querySelector('.dropdown-menu');
+  setTimeout(() => {
+    setupProfileDropdown();
+  }, 100);
+  
+  const genresToggle = document.querySelector('.dropdown-toggle');
+  const genresDropdown = document.querySelector('.dropdown');
+  const genresMenu = document.querySelector('.dropdown-menu');
+  
+  if (genresToggle && genresDropdown && genresMenu) {
+    const newGenresToggle = genresToggle.cloneNode(true);
+    genresToggle.parentNode.replaceChild(newGenresToggle, genresToggle);
     
-    if (genresToggle && genresMenu) {
-        // Limpiar todos los event listeners existentes
-        genresToggle.replaceWith(genresToggle.cloneNode(true));
-        const newToggle = document.querySelector('.dropdown-toggle');
-        
-        // Evento súper simple
-        newToggle.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            
-            const dropdown = this.closest('.dropdown');
-            const isActive = dropdown.classList.contains('active');
-            
-            // Cerrar todos los dropdowns
-            document.querySelectorAll('.dropdown').forEach(d => {
-                d.classList.remove('active');
-            });
-            
-            // Abrir el actual si no estaba activo
-            if (!isActive) {
-                dropdown.classList.add('active');
-            }
-            
-            console.log('Dropdown clicked, active:', !isActive);
-        });
-        
-        // Cargar géneros estáticos inmediatamente
-        genresMenu.innerHTML = `
-            <a href="#" onclick="searchGenre('Acción')"><i class="bi bi-lightning"></i> Acción</a>
-            <a href="#" onclick="searchGenre('Aventura')"><i class="bi bi-compass"></i> Aventura</a>
-            <a href="#" onclick="searchGenre('Animación')"><i class="bi bi-palette"></i> Animación</a>
-            <a href="#" onclick="searchGenre('Comedia')"><i class="bi bi-emoji-laughing"></i> Comedia</a>
-            <a href="#" onclick="searchGenre('Crimen')"><i class="bi bi-shield-exclamation"></i> Crimen</a>
-            <a href="#" onclick="searchGenre('Drama')"><i class="bi bi-emoji-tear"></i> Drama</a>
-            <a href="#" onclick="searchGenre('Familia')"><i class="bi bi-house-heart"></i> Familia</a>
-            <a href="#" onclick="searchGenre('Fantasía')"><i class="bi bi-magic"></i> Fantasía</a>
-            <a href="#" onclick="searchGenre('Terror')"><i class="bi bi-moon"></i> Terror</a>
-            <a href="#" onclick="searchGenre('Romance')"><i class="bi bi-heart"></i> Romance</a>
-        `;
-    }
-    
-    // Profile dropdown simple
-    const profileToggle = document.getElementById('profile-toggle');
-    const profileDropdown = document.querySelector('.profile-dropdown');
-    
-    if (profileToggle && profileDropdown) {
-        profileToggle.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            profileDropdown.classList.toggle('active');
-            console.log('Profile dropdown clicked');
-        });
-    }
-    
-    // Cerrar dropdowns al hacer click fuera
-    document.addEventListener('click', function(e) {
-        document.querySelectorAll('.dropdown, .profile-dropdown').forEach(dropdown => {
-            if (!dropdown.contains(e.target)) {
-                dropdown.classList.remove('active');
-            }
-        });
+    newGenresToggle.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      
+      const profileDropdown = document.querySelector('.profile-dropdown');
+      if (profileDropdown) {
+        profileDropdown.classList.remove('active');
+      }
+      
+      genresDropdown.classList.toggle('active');
     });
+    
+    genresMenu.innerHTML = `
+      <a href="#" onclick="searchGenre('Acción')"><i class="bi bi-lightning"></i> Acción</a>
+      <a href="#" onclick="searchGenre('Aventura')"><i class="bi bi-compass"></i> Aventura</a>
+      <a href="#" onclick="searchGenre('Animación')"><i class="bi bi-palette"></i> Animación</a>
+      <a href="#" onclick="searchGenre('Comedia')"><i class="bi bi-emoji-laughing"></i> Comedia</a>
+      <a href="#" onclick="searchGenre('Crimen')"><i class="bi bi-shield-exclamation"></i> Crimen</a>
+      <a href="#" onclick="searchGenre('Drama')"><i class="bi bi-emoji-tear"></i> Drama</a>
+      <a href="#" onclick="searchGenre('Familia')"><i class="bi bi-house-heart"></i> Familia</a>
+      <a href="#" onclick="searchGenre('Fantasía')"><i class="bi bi-magic"></i> Fantasía</a>
+      <a href="#" onclick="searchGenre('Terror')"><i class="bi bi-moon"></i> Terror</a>
+      <a href="#" onclick="searchGenre('Romance')"><i class="bi bi-heart"></i> Romance</a>
+    `;
+  }
+  
+  document.addEventListener('click', function(e) {
+    const profileDropdown = document.querySelector('.profile-dropdown');
+    const genresDropdown = document.querySelector('.dropdown');
+    
+    if (profileDropdown && !profileDropdown.contains(e.target)) {
+      profileDropdown.classList.remove('active');
+    }
+    
+    if (genresDropdown && !genresDropdown.contains(e.target)) {
+      genresDropdown.classList.remove('active');
+    }
+  });
+  
+  setTimeout(() => {
+    initializeApp();
+  }, 200);
 });
 
-// Función simple para buscar por género
-function searchGenre(genreName) {
-    console.log('Searching genre:', genreName);
-    
-    // Mostrar sección de resultados
-    const genreSection = document.getElementById("genre-section");
-    const genreTitle = document.getElementById("genre-title");
-    const genreMovies = document.getElementById("genre-movies");
-    
-    if (genreSection && genreTitle && genreMovies) {
-        genreSection.style.display = "block";
-        genreTitle.textContent = `Género: ${genreName}`;
-        genreMovies.innerHTML = `
-            <p style="color: rgba(255,255,255,0.7); text-align:center; padding:20px;">
-                Mostrando películas de ${genreName}... <br>
-                (Conecta tu API para ver contenido real)
-            </p>
-        `;
-    }
-    
-    // Cerrar dropdown
-    document.querySelectorAll('.dropdown').forEach(d => {
-        d.classList.remove('active');
-    });
-    
-    // Scroll hacia los resultados
-    if (genreSection) {
-        genreSection.scrollIntoView({ behavior: 'smooth' });
-    }
-}
-  
-// Lanzar
 document.addEventListener("DOMContentLoaded", initializeApp);
