@@ -207,7 +207,7 @@ Hubo profesionalismo por ambos lados para poder crear este proyecto **totalmente
 ##  Sustentación del Proyecto
 
 [![Google Drive](https://img.shields.io/badge/SUSTENTACIÓN-GOOGLE%20DRIVE-green?style=for-the-badge&logo=googledrive)](https://drive.google.com/drive/folders/1jiOGGWNO4sI5h1MfRMJGW91qCjOzU5D7?usp=sharing)
-[![GitHub](https://img.shields.io/badge/REPOSITORIO-GITHUB-black?style=for-the-badge&logo=github)](https://github.com/SayaraAparicio/Proyecto_Express_Backend_AparicioSayara_AguilarSantiago)
+[![GitHub](https://img.shields.io/badge/REPOSITORIO-GITHUB-black?style=for-the-badge&logo=github)](https://github.com/Santiagoaghhh/Proyecto_Express_Backend_AparicioSayara-AguilarSantiago)
 
 Aquí se encuentra la sustentación del proyecto **KarenFlix**, desarrollado con **Node.js + Express** para el backend y **HTML, CSS y JavaScript puro** para el frontend.  
 En esta sustentación se explican los **requerimientos**, los **patrones y principios aplicados**, así como la **implementación** y las **funcionalidades clave**: gestión de usuarios, películas/series, reseñas, categorías y rankings.
