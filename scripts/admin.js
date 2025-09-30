@@ -54,60 +54,171 @@ let mockUsers = [
 
 let mockMovies = [
     {
-        id: 1,
-        title: 'Avatar: El Camino del Agua',
-        category: 'Ciencia Ficción',
-        year: 2022,
-        status: 'approved',
-        rating: 4.5,
-        reviews: 89,
-        poster: 'https://image.tmdb.org/t/p/w500/t6HIqrRAclMCA60NsSmeqe9RmNV.jpg',
-        type: 'movie'
-    },
-    {
-        id: 2,
-        title: 'The Last of Us',
-        category: 'Drama',
-        year: 2023,
-        status: 'approved',
-        rating: 4.8,
-        reviews: 156,
-        poster: 'https://image.tmdb.org/t/p/w500/uKvVjHNqB5VmOrdxqAt2F7J78ED.jpg',
-        type: 'series'
-    },
-    {
-        id: 3,
-        title: 'John Wick 4',
-        category: 'Acción',
-        year: 2023,
-        status: 'pending',
-        rating: 4.3,
-        reviews: 67,
-        poster: 'https://image.tmdb.org/t/p/w500/vZloFAK7NmvMGKE7VkF5UHaz0I.jpg',
-        type: 'movie'
-    },
-    {
-        id: 4,
-        title: 'Wednesday',
-        category: 'Terror',
-        year: 2022,
-        status: 'approved',
-        rating: 4.2,
-        reviews: 234,
-        poster: 'https://image.tmdb.org/t/p/w500/9PFonBhy4cQy7Jz20NpMygczOkv.jpg',
-        type: 'series'
-    },
-    {
-        id: 5,
-        title: 'Black Panther: Wakanda Forever',
-        category: 'Acción',
-        year: 2022,
-        status: 'approved',
-        rating: 4.0,
-        reviews: 145,
-        poster: 'https://image.tmdb.org/t/p/w500/sv1xJUazXeYqALzczSZ3O6nkH75.jpg',
-        type: 'movie'
-    }
+    id: 1,
+    title: 'Stranger Things 4',
+    category: 'Ciencia Ficción',
+    year: 2022,
+    status: 'approved',
+    rating: 4.7,
+    reviews: 320,
+    poster: 'https://image.tmdb.org/t/p/w500/49WJfeN0moxb9IPfGn8AIqMGskD.jpg',
+    type: 'series'
+},
+{
+    id: 2,
+    title: 'Avengers: Endgame',
+    category: 'Acción',
+    year: 2019,
+    status: 'approved',
+    rating: 4.8,
+    reviews: 10500,
+    poster: 'https://image.tmdb.org/t/p/w500/or06FN3Dka5tukK1e9sl16pB3iy.jpg',
+    type: 'movie'
+},
+{
+    id: 3,
+    title: 'Minions: Nace un Villano',
+    category: 'Animación',
+    year: 2022,
+    status: 'approved',
+    rating: 4.1,
+    reviews: 210,
+    poster: 'https://image.tmdb.org/t/p/w500/wKiOkZTN9lUUUNZLmtnwubZYONg.jpg',
+    type: 'movie'
+},
+{
+    id: 4,
+    title: 'Wednesday',
+    category: 'Terror',
+    year: 2022,
+    status: 'approved',
+    rating: 4.2,
+    reviews: 234,
+    poster: 'https://image.tmdb.org/t/p/w500/9PFonBhy4cQy7Jz20NpMygczOkv.jpg',
+    type: 'series'
+},
+{
+    id: 5,
+    title: 'The Batman',
+    category: 'Acción',
+    year: 2022,
+    status: 'approved',
+    rating: 4.4,
+    reviews: 289,
+    poster: 'https://image.tmdb.org/t/p/w500/74xTEgt7R36Fpooo50r9T25onhq.jpg',
+    type: 'movie'
+},
+{
+    id: 6,
+    title: 'Top Gun: Maverick',
+    category: 'Acción',
+    year: 2022,
+    status: 'approved',
+    rating: 4.8,
+    reviews: 450,
+    poster: 'https://image.tmdb.org/t/p/w500/62HCnUTziyWcpDaBO2i1DX17ljH.jpg',
+    type: 'movie'
+},
+{
+    id: 7,
+    title: 'Thor: Love and Thunder',
+    category: 'Fantasia',
+    year: 2022,
+    status: 'pending',
+    rating: 3.9,
+    reviews: 178,
+    poster: 'https://image.tmdb.org/t/p/w500/pIkRyD18kl4FhoCNQuWxWu5cBLM.jpg',
+    type: 'movie'
+},
+{
+    id: 8,
+    title: 'House of the Dragon',
+    category: 'Fantasia',
+    year: 2022,
+    status: 'approved',
+    rating: 4.6,
+    reviews: 198,
+    poster: 'https://image.tmdb.org/t/p/w500/1X4h40fcB4WWUmIBK0auT4zRBAV.jpg',
+    type: 'series'
+},
+{
+    id: 9,
+    title: 'Black Panther: Wakanda Forever',
+    category: 'Acción',
+    year: 2022,
+    status: 'approved',
+    rating: 4.0,
+    reviews: 145,
+    poster: 'https://image.tmdb.org/t/p/w500/sv1xJUazXeYqALzczSZ3O6nkH75.jpg',
+    type: 'movie'
+},
+{
+    id: 10,
+    title: 'The Last of Us',
+    category: 'Drama',
+    year: 2023,
+    status: 'approved',
+    rating: 4.8,
+    reviews: 156,
+    poster: 'https://image.tmdb.org/t/p/w500/uKvVjHNqB5VmOrdxqAt2F7J78ED.jpg',
+    type: 'series'
+},
+{
+    id: 11,
+    title: 'Doctor Strange en el Multiverso de la Locura',
+    category: 'Fantasia',
+    year: 2022,
+    status: 'approved',
+    rating: 4.1,
+    reviews: 210,
+    poster: 'https://image.tmdb.org/t/p/w500/wRnbWt44nKjsFPrqSmwYki5vZtF.jpg',
+    type: 'movie'
+},
+{
+    id: 12,
+    title: 'Andor',
+    category: 'Ciencia Ficción',
+    year: 2022,
+    status: 'approved',
+    rating: 4.3,
+    reviews: 120,
+    poster: 'https://image.tmdb.org/t/p/w500/59SVNwLfoMnZPPB6ukW6dlPxAdI.jpg',
+    type: 'series'
+},
+{
+    id: 13,
+    title: 'John Wick 4',
+    category: 'Acción',
+    year: 2023,
+    status: 'pending',
+    rating: 4.3,
+    reviews: 67,
+    poster: 'https://image.tmdb.org/t/p/w500/vZloFAK7NmvMGKE7VkF5UHaz0I.jpg',
+    type: 'movie'
+},
+{
+    id: 14,
+    title: 'She-Hulk: Defensora de Héroes',
+    category: 'Comedia',
+    year: 2022,
+    status: 'approved',
+    rating: 3.7,
+    reviews: 95,
+    poster: 'https://image.tmdb.org/t/p/w500/zNugnnR5KEmq9EzLcl0Me1UmHYk.jpg',
+    type: 'series'
+},
+{
+    id: 15,
+    title: 'Avatar: El Camino del Agua',
+    category: 'Ciencia Ficción',
+    year: 2022,
+    status: 'approved',
+    rating: 4.5,
+    reviews: 89,
+    poster: 'https://image.tmdb.org/t/p/w500/t6HIqrRAclMCA60NsSmeqe9RmNV.jpg',
+    type: 'movie'
+}
+
 ];
 
 let mockReviews = [
@@ -180,7 +291,77 @@ let mockReviews = [
         dislikes: 5,
         date: '2024-02-28',
         status: 'approved'
-    }
+    },{
+    id: 6,
+    userId: 2,
+    userName: 'Luis Ramírez',
+    movieId: 2,
+    movieTitle: 'The Last of Us',
+    title: 'Fiel al videojuego',
+    content: 'Una adaptación impresionante, la química entre Pedro Pascal y Bella Ramsey es increíble.',
+    rating: 4.9,
+    likes: 120,
+    dislikes: 3,
+    date: '2024-03-01',
+    status: 'approved'
+},
+{
+    id: 7,
+    userId: 3,
+    userName: 'María López',
+    movieId: 10,
+    movieTitle: 'Top Gun: Maverick',
+    title: 'Más que nostalgia',
+    content: 'Una secuela que supera a la original, llena de adrenalina y emoción.',
+    rating: 4.8,
+    likes: 98,
+    dislikes: 7,
+    date: '2024-03-05',
+    status: 'approved'
+},
+{
+    id: 8,
+    userId: 4,
+    userName: 'Carlos Pérez',
+    movieId: 8,
+    movieTitle: 'The Batman',
+    title: 'Oscura y atrapante',
+    content: 'Robert Pattinson sorprende con un Batman distinto, más detectivesco y sombrío.',
+    rating: 4.4,
+    likes: 76,
+    dislikes: 12,
+    date: '2024-03-10',
+    status: 'approved'
+},
+{
+    id: 9,
+    userId: 5,
+    userName: 'Ana Torres',
+    movieId: 4,
+    movieTitle: 'Wednesday',
+    title: 'La sorpresa del año',
+    content: 'Jenna Ortega se roba la serie. El tono gótico y el misterio están muy bien logrados.',
+    rating: 4.3,
+    likes: 142,
+    dislikes: 10,
+    date: '2024-03-15',
+    status: 'approved'
+},
+{
+    id: 10,
+    userId: 6,
+    userName: 'Diego Fernández',
+    movieId: 3,
+    movieTitle: 'John Wick 4',
+    title: 'Acción sin descanso',
+    content: 'Keanu Reeves demuestra por qué es el rey del cine de acción. Escenas coreografiadas de manera brutal.',
+    rating: 4.5,
+    likes: 88,
+    dislikes: 6,
+    date: '2024-03-20',
+    status: 'approved'
+}
+
 ];
 
 let mockCategories = [
