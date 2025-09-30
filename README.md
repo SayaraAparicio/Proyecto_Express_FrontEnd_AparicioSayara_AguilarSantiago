@@ -181,3 +181,45 @@ Asegúrese de que el backend se encuentre en ejecución antes de probar las func
 
 
 ---
+
+
+
+## **Contribuciones**
+
+### **Sayara Aparicio (FrontEnd Developer)**  
+Sayara fue la responsable del **desarrollo del FrontEnd** de KarenFlix, creando una interfaz amigable y **responsive** con **HTML, CSS y JavaScript puro**.  
+Diseñó y programó las pantallas principales: **Inicio, Registro/Login, Listado de películas, Detalle de película y Panel de administrador**, asegurando que consumieran de manera correcta los **endpoints del backend**.  
+También se encargó de la **validación visual de datos**, mostrando mensajes claros de error y éxito provenientes de las respuestas del servidor.  
+Su trabajo garantizó una experiencia de usuario clara, fluida y adaptable a distintos dispositivos.  
+
+### **Santiago Aguilar (Backend Developer)**  
+Santiago fue el encargado de la **implementación del Backend** en **Node.js con Express**, estructurando la arquitectura modular del proyecto (**models, controllers, routes, middlewares, services, config, utils**).  
+Implementó la **gestión de usuarios**, la **gestión de películas/series**, el **sistema de reseñas con ratings y likes/dislikes**, y el cálculo del **ranking ponderado**.  
+Aseguró una **autenticación robusta con JWT**, la correcta aplicación de **validaciones con express-validator** y la **seguridad** mediante bcrypt, express-rate-limit y passport-jwt.  
+Además, gestionó la **persistencia de datos en MongoDB** con transacciones para operaciones críticas y documentó los endpoints con **Swagger**.  
+
+### **En conclusión...**  
+Ambas partes colaboraron enorme y activamente en la realización del proyecto.  
+Hubo profesionalismo por ambos lados para poder crear este proyecto **totalmente funcional**.
+
+---
+
+##  Sustentación del Proyecto
+
+[![Google Drive](https://img.shields.io/badge/SUSTENTACIÓN-GOOGLE%20DRIVE-green?style=for-the-badge&logo=googledrive)](https://drive.google.com/drive/folders/1jiOGGWNO4sI5h1MfRMJGW91qCjOzU5D7?usp=sharing)
+[![GitHub](https://img.shields.io/badge/REPOSITORIO-GITHUB-black?style=for-the-badge&logo=github)](https://github.com/SayaraAparicio/Proyecto_Express_BackEnd_AparicioSayara_AguilarSantiago)
+
+Aquí se encuentra la sustentación del proyecto **KarenFlix**, desarrollado con **Node.js + Express** para el backend y **HTML, CSS y JavaScript puro** para el frontend.  
+En esta sustentación se explican los **requerimientos**, los **patrones y principios aplicados**, así como la **implementación** y las **funcionalidades clave**: gestión de usuarios, películas/series, reseñas, categorías y rankings.
+
+---
+
+# Desarrollado por
+
+- Santiago Aguilar - [Linkedin](https://www.linkedin.com/in/santiago-aguilar-208b38348/) - [GitHub](https://github.com/Santiagoaghhh) 
+
+- Sayara Aparicio - [LinkedIn](https://www.linkedin.com/in/sayara-aparicio-38827b373/) - [GitHub](https://github.com/SayaraAparicio/)
+
+
+---
+
