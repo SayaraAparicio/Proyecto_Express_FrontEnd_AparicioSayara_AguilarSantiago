@@ -1,3 +1,13 @@
+const TOKEN = () => {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    console.warn("No hay token disponible");
+    return null;
+  }
+  return token;
+};
+
+
 function renderStars(rating) {
   const maxStars = 5;
   const filled = Math.round(rating);
@@ -24,9 +34,9 @@ function createMovieCard(movie) {
   const title = movie.titulo || "Sin título";
 
   return `
-  <article class="movie-card" onclick="openMovie('${movie._id}', '${title}')">
+  <article class="movie-card" onclick="openMovie('${movie._id}', '${title}', '${posterUrl}')">
     <div class="movie-poster" style="background-image: url('${posterUrl}')">
-      <div class="movie-rating">★ ${rating}</div>
+      <div class="movie-rating">☆ ${rating}</div>
     </div>
     <div class="movie-info">
       <h3 class="movie-title">${title}</h3>
@@ -291,6 +301,11 @@ async function initializeApp() {
     renderMoviesGrid(populares.slice(0, 12), "popular-section");
     renderMoviesGrid(ultimos.slice(0, 12), "upcoming-section");
 
+    // Actualizar hero con película destacada
+    if (peliculas && peliculas.length > 0) {
+      updateHeroSection(peliculas[0]);
+    }
+
     await loadCategories();
     setupSearch();
     setupMobileMenu();
@@ -301,23 +316,59 @@ async function initializeApp() {
   }
 }
 
-const TOKEN = () => localStorage.getItem("token");
+function updateHeroSection(movie) {
+  if (!movie) return;
+  
+  const heroTitle = document.getElementById("hero-title");
+  const heroDescription = document.getElementById("hero-description");
+  const heroYear = document.getElementById("hero-year");
+  const heroCategory = document.getElementById("hero-category");
+  const heroBg = document.getElementById("hero-bg");
+  const heroButtons = document.querySelector(".hero-buttons");
+  
+  if (heroTitle) heroTitle.textContent = movie.titulo || "Película Destacada";
+  if (heroDescription) heroDescription.textContent = movie.sinopsis || "Descripción no disponible";
+  if (heroYear) heroYear.textContent = movie.anno || "2024";
+  if (heroCategory) heroCategory.textContent = movie.tipo === "serie" ? "Serie Destacada" : "Película Destacada";
+  if (heroBg && movie.imagen) heroBg.style.backgroundImage = `url('${movie.imagen}')`;
+  
+  if (heroButtons) {
+    heroButtons.innerHTML = `
+      <button class="btn-primary">
+        <a class="watchnow" href="https://www.netflix.com/co/">
+          <i class="bi bi-play-fill"></i> VER AHORA
+        </a>
+      </button>
+      <button class="btn-secondary" onclick="displayMovieReviews('${movie._id}')">
+        <i class="bi bi-chat-left-text"></i> VER RESEÑAS
+      </button>
+      <button class="btn-primary" onclick="openReviewModal('${movie._id}', '${movie.titulo?.replace(/'/g, "\\'")}', '${movie.imagen || ""}')">
+        <i class="bi bi-pencil-square"></i> ESCRIBIR RESEÑA
+      </button>
+    `;
+  }
+  
+  // Guardar referencia global
+  __currentMovieForReview = { 
+    id: movie._id, 
+    title: movie.titulo, 
+    poster: movie.imagen 
+  };
+}
+
 
 function isValidObjectId(id) {
   return typeof id === "string" && /^[a-f\d]{24}$/i.test(id);
 }
 
 async function ensureidPelicula(idPelicula) {
-  if (isValidObjectId(idPelicula)) return idPelicula;
-  try {
-    const res = await fetch(`${BASE_URL}/movies`);
-    const arr = await res.json();
-    if (Array.isArray(arr) && arr.length > 0 && arr[0]._id) {
-      return arr[0]._id;
-    }
-  } catch (e) {}
-  alert("No se pudo determinar una película para reseñar.");
-  throw new Error("No movie id available");
+  // Si el ID tiene formato válido, retornarlo directamente
+  if (typeof idPelicula === "string" && idPelicula.length === 24) {
+    return idPelicula;
+  }
+  
+  showNotification("ID de película inválido", "error");
+  throw new Error("Invalid movie ID");
 }
 
 function ensureReviewsSection() {
@@ -333,29 +384,48 @@ function ensureReviewsSection() {
 }
 
 function reviewCard(r) {
-  const likes = Array.isArray(r.likes) ? r.likes.length : (r.totalLikes ?? 0);
-  const dislikes = Array.isArray(r.dislikes) ? r.dislikes.length : (r.totalDislikes ?? 0);
+  const likes = Array.isArray(r.likes) ? r.likes.length : 0;
+  const dislikes = Array.isArray(r.dislikes) ? r.dislikes.length : 0;
   const title = r.titulo || "Sin título";
-  const txt = r.comentario || "";
-  const rating = r.rating ?? "N/A";
+  const txt = r.comentario || "Sin comentario";
+  const rating = r.rating ?? 0;
   const id = r._id;
+  
+  // Obtener inicial del usuario (por ahora genérica)
+  const userInitial = r.nombreUsuario ? r.nombreUsuario[0].toUpperCase() : 'U';
+  const userName = r.nombreUsuario || 'Usuario Anónimo';
   
   const stars = Array.from({length: 5}, (_, i) => 
     `<span class="star ${i < rating ? 'active' : ''}">★</span>`
   ).join('');
 
+  // Formatear fecha
+  let dateStr = '';
+  if (r.creadaEn) {
+    try {
+      const date = new Date(r.creadaEn);
+      dateStr = date.toLocaleDateString('es-ES', { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+      });
+    } catch (e) {
+      dateStr = '';
+    }
+  }
+
   return `
     <div class="review-card">
       <div class="review-header">
         <div class="reviewer-info">
-          <div class="reviewer-avatar">${(r.nombreUsuario || 'U')[0].toUpperCase()}</div>
+          <div class="reviewer-avatar">${userInitial}</div>
           <div class="reviewer-details">
-            <h4>${r.nombreUsuario || 'Usuario Anónimo'}</h4>
+            <h4>${userName}</h4>
             <div class="review-rating">
               ${stars}
               <span class="rating-number">${rating}/5</span>
             </div>
-            <div class="review-date">${r.creadaEn ? new Date(r.creadaEn).toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' }) : ''}</div>
+            ${dateStr ? `<div class="review-date">${dateStr}</div>` : ''}
           </div>
         </div>
       </div>
@@ -382,9 +452,22 @@ async function displayMovieReviews(idPelicula) {
   try {
     const realId = await ensureidPelicula(String(idPelicula));
     const sec = ensureReviewsSection();
+    sec.style.display = "block";
     const list = sec.querySelector("#reviews-list");
     
-    list.innerHTML = `
+    // Botones de acción
+    const movieTitle = __currentMovieForReview.title || "esta película";
+    const posterUrl = __currentMovieForReview.poster || "";
+    
+    const actionButtons = `
+      <div style="margin-bottom: 30px; display: flex; gap: 15px; flex-wrap: wrap;">
+        <button class="btn-primary" onclick="openReviewModal('${realId}', '${movieTitle.replace(/'/g, "\\'")}', '${posterUrl}')">
+          <i class="bi bi-pencil-square"></i> ESCRIBIR RESEÑA
+        </button>
+      </div>
+    `;
+    
+    list.innerHTML = actionButtons + `
       <div class="loading">
         <div class="spinner"></div>
         <span>Cargando reseñas...</span>
@@ -393,7 +476,7 @@ async function displayMovieReviews(idPelicula) {
 
     const res = await fetch(`${BASE_URL}/reviews/${realId}`);
     if (!res.ok) {
-      list.innerHTML = `
+      list.innerHTML = actionButtons + `
         <div class="no-reviews">
           <i class="bi bi-chat-left-text" style="font-size: 3rem; opacity: 0.5; margin-bottom: 15px;"></i>
           <p>No se pudieron cargar reseñas (HTTP ${res.status}).</p>
@@ -404,7 +487,7 @@ async function displayMovieReviews(idPelicula) {
     
     const reviews = await res.json();
     if (!Array.isArray(reviews) || reviews.length === 0) {
-      list.innerHTML = `
+      list.innerHTML = actionButtons + `
         <div class="no-reviews">
           <i class="bi bi-chat-left-text" style="font-size: 3rem; opacity: 0.5; margin-bottom: 15px;"></i>
           <p>Aún no hay reseñas. ¡Sé el primero en opinar!</p>
@@ -413,14 +496,15 @@ async function displayMovieReviews(idPelicula) {
       return;
     }
     
+    const avgRating = reviews.reduce((acc, r) => acc + (r.rating || 0), 0) / reviews.length;
     const reviewsHeader = `
       <div class="reviews-header">
         <div class="reviews-stats">
           <div class="avg-rating">
-            <span class="rating-number">${(reviews.reduce((acc, r) => acc + (r.rating || 0), 0) / reviews.length).toFixed(1)}</span>
+            <span class="rating-number">${avgRating.toFixed(1)}</span>
             <div class="rating-stars">
               ${Array.from({length: 5}, (_, i) => 
-                `<span class="star ${i < Math.round(reviews.reduce((acc, r) => acc + (r.rating || 0), 0) / reviews.length) ? 'active' : ''}">★</span>`
+                `<span class="star ${i < Math.round(avgRating) ? 'active' : ''}">★</span>`
               ).join('')}
             </div>
             <span class="reviews-count">${reviews.length} reseña(s)</span>
@@ -429,7 +513,7 @@ async function displayMovieReviews(idPelicula) {
       </div>
     `;
     
-    list.innerHTML = reviewsHeader + reviews.map(reviewCard).join("");
+    list.innerHTML = actionButtons + reviewsHeader + reviews.map(reviewCard).join("");
     sec.scrollIntoView({ behavior: "smooth" });
   } catch (e) {
     alert("No se pudieron mostrar las reseñas.");
@@ -573,8 +657,13 @@ function closeReviewModal() {
 }
 
 async function submitReview(rating) {
-  if (!TOKEN()) {
-    alert("Debes iniciar sesión para reseñar.");
+  const token = TOKEN();
+  
+  if (!token) {
+    showNotification("Debes iniciar sesión para escribir reseñas", "error");
+    setTimeout(() => {
+      window.location.href = "../index.html";
+    }, 2000);
     return;
   }
   
@@ -583,38 +672,54 @@ async function submitReview(rating) {
   const comentario = document.getElementById("rv-text").value.trim();
 
   if (!titulo || !comentario || !rating) {
-    alert("Completa título, reseña y calificación.");
+    showNotification("Completa título, reseña y calificación", "error");
     return;
   }
 
   try {
-    const res = await fetch(`${BASE_URL}/reviews`, {
+    // CAMBIAR ESTA LÍNEA: de /reviews a /resennas
+    const res = await fetch(`${BASE_URL}/resennas`, {  // ← AQUÍ
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${TOKEN()}`
+        "Authorization": `Bearer ${token}`
       },
-      body: JSON.stringify({ idPelicula: idPelicula, titulo, comentario, rating })
+      body: JSON.stringify({ 
+        idPelicula: idPelicula, 
+        titulo: titulo, 
+        comentario: comentario, 
+        rating: rating 
+      })
     });
 
     const data = await res.json().catch(() => ({}));
+    
     if (!res.ok) {
-      alert(data.msg || "No se pudo crear la reseña.");
+      console.error("Error del servidor:", data);
+      showNotification(data.msg || `Error ${res.status}: No se pudo crear la reseña`, "error");
       return;
     }
 
     closeReviewModal();
-    showNotification("✅ Reseña publicada exitosamente", "success");
-    displayMovieReviews(idPelicula);
+    showNotification("Reseña publicada exitosamente", "success");
+    
+    document.getElementById("rv-title").value = "";
+    document.getElementById("rv-text").value = "";
+    document.getElementById("char-count").textContent = "0";
+    
+    setTimeout(() => {
+      displayMovieReviews(idPelicula);
+    }, 500);
+    
   } catch (e) {
-    alert("Error de conexión al publicar la reseña.");
-    console.error(e);
+    console.error("Error de red:", e);
+    showNotification("Error de conexión al publicar la reseña", "error");
   }
 }
 
 async function reactReview(reviewId, tipo, idPelicula) {
   if (!TOKEN()) {
-    alert("Debes iniciar sesión.");
+    showNotification("Debes iniciar sesión para reaccionar", "error");
     return;
   }
   
@@ -628,17 +733,23 @@ async function reactReview(reviewId, tipo, idPelicula) {
       body: JSON.stringify({ tipo })
     });
     
+    const data = await res.json().catch(() => ({}));
+    
     if (!res.ok) {
-      const t = await res.json().catch(() => ({}));
-      alert(t.msg || "No se pudo registrar la reacción.");
+      showNotification(data.msg || "No se pudo registrar la reacción", "error");
       return;
     }
     
-    showNotification(tipo === "like" ? "👍 Me gusta registrado" : "👎 No me gusta registrado", "success");
+    showNotification(
+      tipo === "like" ? "Me gusta registrado" : "No me gusta registrado", 
+      "success"
+    );
     
-    if (idPelicula) displayMovieReviews(idPelicula);
+    if (idPelicula) {
+      await displayMovieReviews(idPelicula);
+    }
   } catch (e) {
-    alert("Error de red al enviar reacción.");
+    showNotification("Error de conexión al enviar reacción", "error");
     console.error(e);
   }
 }
@@ -647,16 +758,25 @@ function showNotification(message, type = "success") {
   const notification = document.createElement("div");
   notification.className = `notification ${type}`;
   notification.textContent = message;
+  
+  const bgColor = type === "success" 
+    ? "linear-gradient(135deg, #10B981, #059669)" 
+    : "linear-gradient(135deg, #EF4444, #DC2626)";
+  
   notification.style.cssText = `
     position: fixed;
     top: 90px;
     right: 20px;
     padding: 15px 25px;
-    background: ${type === "success" ? "linear-gradient(135deg, #10B981, #059669)" : "linear-gradient(135deg, #EF4444, #DC2626)"};
+    background: ${bgColor};
     color: white;
     border-radius: 10px;
     z-index: 10001;
     animation: slideIn 0.3s ease;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.2);
   `;
   
   document.body.appendChild(notification);
@@ -667,8 +787,27 @@ function showNotification(message, type = "success") {
   }, 3000);
 }
 
-function openMovie(idPelicula, movieTitle) {
+function openMovie(idPelicula, movieTitle, posterUrl = '') {
+  // Guardar info de la película actual
+  __currentMovieForReview = { id: idPelicula, title: movieTitle, poster: posterUrl };
+  
+  // Scroll hacia la sección de reseñas
+  const reviewsSection = ensureReviewsSection();
+  reviewsSection.style.display = "block";
+  
+  // Actualizar título de la sección
+  const sectionTitle = reviewsSection.querySelector('.section-title');
+  if (sectionTitle) {
+    sectionTitle.innerHTML = `RESEÑAS DE "${movieTitle}"`;
+  }
+  
+  // Cargar reseñas
   displayMovieReviews(idPelicula);
+  
+  // Scroll suave
+  setTimeout(() => {
+    reviewsSection.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, 100);
 }
 
 function searchGenre(genreName) {

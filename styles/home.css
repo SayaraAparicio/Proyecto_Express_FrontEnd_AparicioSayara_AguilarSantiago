@@ -1412,6 +1412,13 @@ body {
     margin-bottom: 15px;
 }
 
+.review-header, .review-content, .review-actions {
+  display: block !important;
+  opacity: 1 !important;
+  color: white !important;
+}
+
+
 .reviewer-info {
     display: flex;
     align-items: center;
@@ -1658,15 +1665,15 @@ body {
 }
 
 #reviews-section {
-    font-size: 2rem;
-    font-family: 'Inter', sans-serif;
-    font-weight: bold;
-    margin-bottom: 30px;
-    background: linear-gradient(45deg, #E2CAFF, #774eff);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+  display: block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  min-height: 200px;
+  padding: 40px 20px;
+  background: rgba(20, 20, 40, 0.5);
+  margin-top: 40px;
 }
+
 
 .footer {
     text-align: center;
@@ -1770,15 +1777,16 @@ body {
     box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
 }
 
-/* Mejoras para las tarjetas de reseñas */
 .review-card {
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 15px;
-    padding: 25px;
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    transition: all 0.3s ease;
-    animation: fadeIn 0.5s ease;
+  background: rgba(30, 30, 60, 0.8) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  padding: 25px;
+  margin-bottom: 20px;
+  color: white !important;
+  display: block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
 }
 
 .review-card:hover {
@@ -2127,3 +2135,4 @@ body {
         font-size: 0.85rem;
     }
 }
+
