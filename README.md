@@ -70,6 +70,9 @@
 
 # KarenFlix – Frontend
 
+Visita nuestra página:
+[KARENFLIX](https://sayaraaparicio.github.io/Proyecto_Express_FrontEnd_AparicioSayara_AguilarSantiago/)
+
 ## Descripción del Proyecto  
 
 **KarenFlix** es una aplicación web desarrollada en **HTML, CSS y JavaScript puro** que consume los servicios del backend (API RESTful en Node.js + Express + MongoDB).  
