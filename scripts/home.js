@@ -677,8 +677,7 @@ async function submitReview(rating) {
   }
 
   try {
-    // CAMBIAR ESTA LÍNEA: de /reviews a /resennas
-    const res = await fetch(`${BASE_URL}/resennas`, {  // ← AQUÍ
+    const res = await fetch(`${BASE_URL}/reviews`, {  
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -718,39 +717,60 @@ async function submitReview(rating) {
 }
 
 async function reactReview(reviewId, tipo, idPelicula) {
-  if (!TOKEN()) {
+  const token = TOKEN();
+  
+  if (!token) {
     showNotification("Debes iniciar sesión para reaccionar", "error");
     return;
   }
   
+  // Obtener el botón clickeado para feedback visual inmediato
+  const reviewCard = document.querySelector(`[data-review-id="${reviewId}"]`);
+  if (reviewCard) {
+    reviewCard.style.opacity = '0.6';
+  }
+  
   try {
+    console.log('🚀 Enviando reacción:', { reviewId, tipo, idPelicula });
+    
     const res = await fetch(`${BASE_URL}/reactions/${reviewId}/react`, {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${TOKEN()}`,
+        "Authorization": `Bearer ${token}`,
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ tipo })
+      body: JSON.stringify({ tipo: tipo })
     });
+    
+    console.log('📥 Respuesta del backend:', res.status, res.statusText);
     
     const data = await res.json().catch(() => ({}));
     
     if (!res.ok) {
+      if (reviewCard) reviewCard.style.opacity = '1';
+      console.error('❌ Error en reacción:', data);
       showNotification(data.msg || "No se pudo registrar la reacción", "error");
       return;
     }
+    
+    console.log('✅ Reacción exitosa, recargando reseñas...');
     
     showNotification(
       tipo === "like" ? "Me gusta registrado" : "No me gusta registrado", 
       "success"
     );
     
+    // Recargar las reseñas para mostrar los contadores actualizados
     if (idPelicula) {
-      await displayMovieReviews(idPelicula);
+      // Esperar un momento antes de recargar para que el backend procese
+      setTimeout(async () => {
+        await displayMovieReviews(idPelicula);
+      }, 500);
     }
   } catch (e) {
+    if (reviewCard) reviewCard.style.opacity = '1';
+    console.error('💥 Error de red:', e);
     showNotification("Error de conexión al enviar reacción", "error");
-    console.error(e);
   }
 }
 
